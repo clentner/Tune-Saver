@@ -23,7 +23,7 @@ def most_current_track(last_fm_user):
         return last_fm_user.get_recent_tracks(limit=2)[0].track
     except IndexError:
         # No tracks returned
-        return none
+        return None
 
 
 def save_track(track, destinations):
