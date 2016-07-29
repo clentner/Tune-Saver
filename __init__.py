@@ -69,6 +69,9 @@ def main():
         input('\nPress enter to save song')
         # Fetch the song from the Last.fm api
         track = most_current_track(user)
+        if not track:
+            print('Could not get a track from Last.fm.')
+            continue
         print(track.artist.name, " - ", track.title)
 
         success = save_track(track, destinations)
