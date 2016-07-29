@@ -48,13 +48,6 @@ class Soundcloud(Destination):
             print(str(e))
 
     def save(self, track):
-        try:
-            return self._save(track)
-        except HTTPError as e:
-            print(str(e))
-            return False
-
-    def _save(self, track):
         '''
         @param track A pylast track object
         @return True iff saving was successful
