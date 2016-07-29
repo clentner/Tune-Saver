@@ -5,11 +5,12 @@ from urllib.error import HTTPError
 
 class Soundcloud:
     name = "SoundCloud"
-    def __init__(self, config, cache_path = None):
+
+    def __init__(self, config, cache_path=None):
         self.config = config
         self.client = soundcloud.Client(
-            client_id = config['client_id'],
-            client_secret = config['client_secret'],
+            client_id=config['client_id'],
+            client_secret=config['client_secret'],
             redirect_uri='http://127.0.0.1/soundcloud'
         )
         # check for cached access token
@@ -23,8 +24,9 @@ class Soundcloud:
             code = input('Soundcloud code: ')
             response = self.client.exchange_token(code=code)
             self._save_cached_token(self.client.access_token)
-        print("Authenticated to SoundCloud as %s" % self.client.get('/me').username)
-        
+        print("Authenticated to SoundCloud as %s" %
+                self.client.get('/me').username)
+
     def _get_cached_token(self):
         token = None
         try:
@@ -33,21 +35,21 @@ class Soundcloud:
         except IOError:
             pass
         return token
-    
+
     def _save_cached_token(self, token):
         try:
             with open(self.cache_path, 'w') as f:
                 f.write(token)
         except IOError:
             pass
-    
+
     def save(self, track):
         try:
             return self._save(track)
         except HTTPError as e:
             print(str(e))
             return False
-    
+
     def _save(self, track):
         '''
         @param track A pylast track object
@@ -62,15 +64,19 @@ class Soundcloud:
             # Empty list returned
             return False
         track = tracks[0]
-        
+
         if 'y' != input('Is "{}" the correct track? y/n '.format(track.title)):
             return False
-        
+
         playlist_id = self.config['playlist_id']
         tracklist = self.client.get('/playlists/' + playlist_id).tracks
         tracklist.append(track.obj)
-        # Shrink network load by removing unneccessary information, and convert ids to strings
+        # Shrink network load by removing unneccessary information, and convert
+        # ids to strings
         t = [{'id': str(x["id"])} for x in tracklist]
         # Add the track
-        r = self.client.put('/playlists/' + playlist_id, playlist={"tracks": t})
+        r = self.client.put(
+            '/playlists/' + playlist_id,
+            playlist={"tracks": t}
+        )
         return r.status_code == 200

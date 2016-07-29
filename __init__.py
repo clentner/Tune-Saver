@@ -25,6 +25,7 @@ def most_current_track(last_fm_user):
         # No tracks returned
         return none
 
+
 def save_track(track, destinations):
     '''
     Loop through each destination and attempt to save the given track.
@@ -42,13 +43,17 @@ def save_track(track, destinations):
         print('could not save to ' + destination.name)
     return False
 
+
 def main():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    
+
     # last.fm initialization
     last_fm = config['Last.fm']
-    ln = pylast.get_lastfm_network(api_key = last_fm['api_key'], api_secret = last_fm['api_secret'])
+    ln = pylast.get_lastfm_network(
+        api_key=last_fm['api_key'],
+        api_secret=last_fm['api_secret']
+    )
     user = pylast.User(last_fm['username'], ln)
 
     # The order these appear in this list will determine the order of preference.
