@@ -1,8 +1,10 @@
 import requests
 import webbrowser
 
+from destinations.destination import Destination
 
-class FMA:
+
+class FMA(Destination):
     name = "Free Music Archive"
 
     def __init__(self, config):

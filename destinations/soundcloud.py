@@ -2,8 +2,10 @@ import soundcloud
 import webbrowser
 from urllib.error import HTTPError
 
+from destinations.destination import Destination
 
-class Soundcloud:
+
+class Soundcloud(Destination):
     name = "SoundCloud"
 
     def __init__(self, config, cache_path=None):
@@ -34,7 +36,7 @@ class Soundcloud:
             with open(self.cache_path) as f:
                 token = f.read()
         except IOError:
-            pass
+            pass  # Wind up returning None
         return token
 
     def _save_cached_token(self, token):

@@ -3,8 +3,9 @@ import requests
 import shutil
 import webbrowser
 
+from destinations.destination import Destination
 
-class Jamendo():
+class Jamendo(Destination):
     name = "Jamendo"
 
     def __init__(self, config):
