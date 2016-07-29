@@ -18,6 +18,7 @@ class Soundcloud:
             self.cache_path = cache_path
         else:
             self.cache_path = '.soundcloud-cache-' + config['playlist_id']
+          
         self.client.access_token = self._get_cached_token()
         if not self.client.access_token:
             webbrowser.open(self.client.authorize_url())
@@ -40,8 +41,9 @@ class Soundcloud:
         try:
             with open(self.cache_path, 'w') as f:
                 f.write(token)
-        except IOError:
-            pass
+        except IOError as e:
+            # Being unable to cache the token isn't fatal.
+            print(str(e))
 
     def save(self, track):
         try:
@@ -65,6 +67,8 @@ class Soundcloud:
             return False
         track = tracks[0]
 
+        # Handle SoundCloud's bad search by confirming with the user that it
+        # has found the correct track.
         if 'y' != input('Is "{}" the correct track? y/n '.format(track.title)):
             return False
 
