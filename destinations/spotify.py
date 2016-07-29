@@ -34,7 +34,10 @@ class Spotify(Destination):
         @return True iff saving was successful
         '''
         self._token_prompt()
-        q = 'artist:"' + track.artist.name + '" track:"' + track.title + '"'
+        q = 'artist:"{}" track:"{}"'.format(
+            track.artist.name,
+            track.title
+        )
         try:
             spotify_track = self.spotify.search(q, type='track', limit=1)["tracks"]["items"][0]["uri"]
             results = self.spotify.user_playlist_add_tracks(
@@ -43,6 +46,6 @@ class Spotify(Destination):
                 [spotify_track]
             )
             # print(results) # contains the snapshot id
-            return True
+            return (True, "Saved to Spotify playlist")
         except IndexError:
-            return False
+            return (False, "Spotify search returned no results for {}".format(q))

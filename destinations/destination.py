@@ -26,6 +26,11 @@ class Destination(metaclass=ABCMeta):
         will be attempted.
         
         @param track A pylast track object
-        @return True iff saving was successful
+        @return (success, message)
+            success: True iff saving was successful
+            message: str describing what went right or wrong
+                "Saved to dir/file.mp3"
+                "Added to playlist 'New Music'"
+                "Spotify search returned no results"
         '''
         pass

@@ -28,13 +28,11 @@ class FMA(Destination):
         # (?)
         if id == '10' and (track.artist.name !=
                            "Kurt Vile" or track.title != "Freeway"):
-            return False
+            return (False, "Free Music Archive search did not find {}".format(q))
 
         # Get track's webpage URL
-        r = requests.get(
-            'https://freemusicarchive.org/api/get/tracks.json?track_id=' +
-            id +
-            '&limit=1')
+        track_endpoint = 'https://freemusicarchive.org/api/get/tracks.json?track_id={}&limit=1'
+        r = requests.get(track_endpoint.format(id))
         response = r.json()
         track_url = response["dataset"][0]["track_url"]
 
@@ -45,8 +43,12 @@ class FMA(Destination):
         index_end = html.find('"', index)
         download_link = html[index:index_end]
 
-        # Then open a download prompt via the web browser
+        # Then open a download prompt via the web browser.
+        # Downloads via script are blocked (likely based on user-agent).
         webbrowser.open(download_link)
 
         # Ask the user if the file was correct (FMA's search is pretty bad)
-        return 'y' == input('Was that the correct song? y/n ')
+        if 'y' == input('Was that the correct song? y/n '):
+            return (True, 'Opened Free Music Archive download link.')
+        else:
+            return (False, 'Free Music Archive search found incorrect track.')

@@ -19,12 +19,13 @@ class Jamendo(Destination):
         self.name = 'Jamendo'
         endpoint = 'https://api.jamendo.com/v3.0/tracks/?format=json&limit=1&client_id=' + \
             self.config['client_id']
-        url = endpoint + '&artist_name=' + track.artist.name + '&name=' + track.title
+        q = '&artist_name=' + track.artist.name + '&name=' + track.title
+        url = endpoint + q
         r = requests.get(url)
         response = r.json()
         if response['headers']['results_count'] < 1:
             # track not found
-            return False
+            return (False, "Jamendo search returned no results for {}".format(q))
 
         download_url = response['results'][0]['audiodownload']
         if 'save_directory' in self.config:
@@ -36,12 +37,12 @@ class Jamendo(Destination):
                 with open(filename, 'wb') as f:
                     r.raw.decode_content = True
                     shutil.copyfileobj(r.raw, f)
-                # Print a more descriptive "saved to" message
-                self.name = self.config['save_directory']
+                return (True, "Saved from Jamendo to {}".format(filename))
             else:
-                return False
+                return (False, "Jamendo download URL returned status {}".format(r.status_code))
         else:
             # punt the problem to someone else: open a 'Save As' dialogue via
             # the browser.
             webbrowser.open(download_url)
-        return True
+            return (True, "Opened Jamendo download URL")
+        

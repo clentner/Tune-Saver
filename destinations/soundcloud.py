@@ -59,13 +59,13 @@ class Soundcloud(Destination):
         tracks = self.client.get('/tracks', q=q, limit=2)
         if len(tracks) < 1:
             # Empty list returned
-            return False
+            return (False, 'Soundcloud search found 0 tracks for {}'.format(q))
         track = tracks[0]
 
         # Handle SoundCloud's bad search by confirming with the user that it
         # has found the correct track.
         if 'y' != input('Is "{}" the correct track? y/n '.format(track.title)):
-            return False
+            return (False, 'Soundcloud search found incorrect track for {}'.format(q))
 
         playlist_id = self.config['playlist_id']
         tracklist = self.client.get('/playlists/' + playlist_id).tracks
@@ -78,4 +78,7 @@ class Soundcloud(Destination):
             '/playlists/' + playlist_id,
             playlist={"tracks": t}
         )
-        return r.status_code == 200
+        if r.status_code == 200:
+            return (True, 'Added track to SoundCloud playlist {}'.format(playlist_id))
+        else:
+            return (False, 'SoundCloud playlist returned status code {}'.format(r.status_code))

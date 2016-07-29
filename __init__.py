@@ -32,15 +32,16 @@ def save_track(track, destinations):
     '''
     for destination in destinations:
         try:
-            if destination.save(track):
-                print('saved to ' + destination.name)
+            success, message = destination.save(track)
+            print(message)
+            if success:
                 return True
         except Exception as e:
             # This looks bad, but there's a real reason to just eat the exception.
             # For whatever reason, saving to one destination caused an error. This is not
             # cause for giving up on the other destinations.
             print(str(e))
-        print('could not save to ' + destination.name)
+            print('Could not save to ' + destination.name)
     return False
 
 
