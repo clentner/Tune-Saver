@@ -58,11 +58,15 @@ def main():
     # The order these appear in this list will determine the order of preference.
     # If saving to one destination succeeds, no others will be tried.
     destinations = [
+        # Highest priority: The ability to download the track directly.
+        # Try the services with better search capabilities first.
         jamendo.Jamendo(config['Jamendo']),
         fma.FMA(config['Free Music Archive']),
         soundcloud_download.SoundcloudDownload(config['Soundcloud']),
+        # Failing that, try to save to a streaming music service
         spotify.Spotify(config['Spotify']),
         soundcloud.Soundcloud(config['Soundcloud']),
+        # Last resort: maybe it's available in video form
         youtube.Youtube(config['YouTube'])
     ]
     # Main input loop
