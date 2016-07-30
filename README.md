@@ -1,15 +1,17 @@
-Requires pylast, soundcloud, and spotipy:
+Requires the google api client, pylast, soundcloud, and spotipy:
 
-    pip install pylast
-    pip install soundcloud
-	pip install spotipy
+    pip install --upgrade google-api-python-client
+    pip install --upgrade pylast
+    pip install --upgrade soundcloud
+	pip install --upgrade spotipy
 
-Todo: YouTube
-Todo: Archive.org
-Todo: Soundcloud downloads
-Todo: Soundcloud purchase_url
-Todo: Multiple playlist targets
-Todo: Multiple tries with SoundCloud
-Todo: Scrape Last.fm for Buy link
-Todo: Proper authentication via custom URI
-Todo: Playlist titles
+Todo: 
+
+* Archive.org
+* Soundcloud downloads
+* Soundcloud purchase_url
+* Multiple playlist targets
+* Multiple tries with SoundCloud
+* Scrape Last.fm for Buy link
+* Proper authentication via custom URI
+* Playlist titles

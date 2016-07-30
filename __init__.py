@@ -1,10 +1,7 @@
 import configparser
 import pylast
 
-from destinations import fma
-from destinations import soundcloud
-from destinations import spotify
-from destinations import jamendo
+from destinations import fma, soundcloud, spotify, jamendo, youtube
 
 
 def most_current_track(last_fm_user):
@@ -64,6 +61,7 @@ def main():
         fma.FMA(config['Free Music Archive']),
         spotify.Spotify(config['Spotify']),
         soundcloud.Soundcloud(config['Soundcloud']),
+        youtube.Youtube(config['YouTube'])
     ]
     # Main input loop
     while True:
