@@ -7,11 +7,12 @@ Requires the google api client, pylast, soundcloud, and spotipy:
 
 Todo: 
 
-* Archive.org
-* Soundcloud downloads
+* Intelligent title matching
 * Soundcloud purchase_url
 * Multiple playlist targets
 * Multiple tries with SoundCloud
 * Scrape Last.fm for Buy link
-* Proper authentication via custom URI
+* Proper OAuth2 via custom URI
 * Playlist titles
+* Refactor shared code
+* Split search() out from every save() method
