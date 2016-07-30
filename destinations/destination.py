@@ -7,6 +7,8 @@ class Destination(metaclass=ABCMeta):
     to a playlist, downloading a file, or opening a web browser to a
     purchase URL.
     '''
+    name = "Destination"
+    
     @abstractmethod
     def __init__(self, config):
         '''
