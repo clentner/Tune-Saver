@@ -49,10 +49,7 @@ def main():
 
     # last.fm initialization
     last_fm = config['Last.fm']
-    ln = pylast.get_lastfm_network(
-        api_key=last_fm['api_key'],
-        api_secret=last_fm['api_secret']
-    )
+    ln = pylast.get_lastfm_network(api_key=last_fm['api_key'])
     user = pylast.User(last_fm['username'], ln)
 
     # The order these appear in this list will determine the order of preference.

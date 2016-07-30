@@ -44,6 +44,11 @@ Todo
 * Multiple tries with SoundCloud
 * Scrape Last.fm for Buy link
 * Proper OAuth2 via custom URI
+* Investigate auth flows that don't involve client secrets.
+* * Last.fm doesn't need one
+* * YouTube api just expose the client secret
+* * Spotify Implicit Grant flow
+* * SoundCloud client side javascript flow?
 * Playlist titles
 * Refactor shared code
 * Split search() out from every save() method
