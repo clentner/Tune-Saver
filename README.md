@@ -22,7 +22,7 @@ Requires the google api client, pylast, soundcloud, and spotipy:
 	pip install --upgrade spotipy
     
 
-    API Keys
+API Keys
 --------
 For testing, you will need to obtain API keys from the links provided in
 `config template.ini`. When this product is closer to a releasable form,
