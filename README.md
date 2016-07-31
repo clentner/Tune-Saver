@@ -32,18 +32,24 @@ Comment out the appropriate service from the `destinations` array in
 
 Todo
 ----
-
+* Rename 'destinations' to 'services'. This makes more sense because you
+save a song *to* a destination but download *from* a source. Might as well
+call them services.
+* Make a class for potential track.
+    - Implementation data, e.g. URL or UID
+    - Prompt text, e.g. 'Buy this track for $1.29' or 'Save this track to SoundCloud?'
+    - Offers ability to yield multiple potential tracks from one service
 * Intelligent title matching
 * Soundcloud purchase_url
 * Multiple playlist targets
 * Multiple tries with SoundCloud
 * Proper OAuth2 via custom URI
-* * Use the client used for YouTube?
+    - Use the client used for YouTube?
 * Investigate auth flows that don't involve client secrets.
-* * Last.fm doesn't need one
-* * YouTube api just expose the client secret?
-* * Spotify Implicit Grant flow
-* * SoundCloud client side javascript flow?
+    - Last.fm doesn't need one
+    - YouTube api just expose the client secret?
+    - Spotify Implicit Grant flow
+    - SoundCloud client side javascript flow?
 * Playlist titles
 * Refactor shared code
 * Split search() out from every save() method
