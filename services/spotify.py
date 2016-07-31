@@ -1,8 +1,8 @@
 import spotipy
 import spotipy.util
-from destinations.destination import Destination
+from services.service import Service
 
-class Spotify(Destination):
+class Spotify(Service):
     name = "Spotify"
 
     def __init__(self, config):

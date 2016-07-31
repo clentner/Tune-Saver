@@ -4,10 +4,10 @@ import shutil
 import soundcloud
 import webbrowser
 
-from destinations.destination import Destination
+from services.service import Service
 
 
-class SoundcloudDownload(Destination):
+class SoundcloudDownload(Service):
     '''
     Looks for the "Free Download" option on SoundCloud tracks.
     

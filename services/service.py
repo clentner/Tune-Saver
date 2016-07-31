@@ -1,13 +1,13 @@
 from abc import abstractmethod, ABCMeta
 
 
-class Destination(metaclass=ABCMeta):
+class Service(metaclass=ABCMeta):
     '''
     A destination is a way to save a song. For example, adding a track
     to a playlist, downloading a file, or opening a web browser to a
     purchase URL.
     '''
-    name = "Destination"
+    name = "Service"
     
     @abstractmethod
     def __init__(self, config):
@@ -24,7 +24,7 @@ class Destination(metaclass=ABCMeta):
     @abstractmethod
     def save(self, track):
         '''
-        Attempt to save a track. If saving is successful, no other destinations
+        Attempt to save a track. If saving is successful, no other services
         will be attempted.
         
         @param track A pylast track object

@@ -1,8 +1,8 @@
 import configparser
 import pylast
 
-from destinations import fma, soundcloud, spotify, jamendo, youtube
-from destinations import soundcloud_download, last_fm_purchase
+from services import fma, soundcloud, spotify, jamendo, youtube
+from services import soundcloud_download, last_fm_purchase
 
 
 def most_current_track(last_fm_user):
@@ -24,22 +24,22 @@ def most_current_track(last_fm_user):
         return None
 
 
-def save_track(track, destinations):
+def save_track(track, services):
     '''
-    Loop through each destination and attempt to save the given track.
+    Loop through each service and attempt to save the given track.
     '''
-    for destination in destinations:
+    for service in services:
         try:
-            success, message = destination.save(track)
+            success, message = service.save(track)
             print(message)
             if success:
                 return True
         except Exception as e:
             # This looks bad, but there's a real reason to just eat the exception.
-            # For whatever reason, saving to one destination caused an error. This is not
-            # cause for giving up on the other destinations.
+            # For whatever reason, saving to one service caused an error. This is not
+            # cause for giving up on the other services.
             print(str(e))
-            print('Could not save to ' + destination.name)
+            print('Could not save to ' + service.name)
     return False
 
 
@@ -53,8 +53,8 @@ def main():
     user = pylast.User(last_fm['username'], ln)
 
     # The order these appear in this list will determine the order of preference.
-    # If saving to one destination succeeds, no others will be tried.
-    destinations = [
+    # If saving to/from one service succeeds, no others will be tried.
+    services = [
         # Highest priority: The ability to download the track directly.
         # Try the services with better search capabilities first.
         jamendo.Jamendo(config['Jamendo']),
@@ -78,9 +78,9 @@ def main():
             continue
         print(track.artist.name, " - ", track.title)
 
-        success = save_track(track, destinations)
+        success = save_track(track, services)
         if not success:
-            print('Could not save to any destination.')
+            print('Could not save to any service.')
 
 if __name__ == '__main__':
     main()

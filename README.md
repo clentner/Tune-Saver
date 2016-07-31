@@ -32,9 +32,6 @@ Comment out the appropriate service from the `destinations` array in
 
 Todo
 ----
-* Rename 'destinations' to 'services'. This makes more sense because you
-save a song *to* a destination but download *from* a source. Might as well
-call them services.
 * Make a class for potential track.
     - Implementation data, e.g. URL or UID
     - Prompt text, e.g. 'Buy this track for $1.29' or 'Save this track to SoundCloud?'
@@ -53,5 +50,6 @@ call them services.
     - Spotify Implicit Grant flow
     - SoundCloud client side javascript flow?
 * Playlist titles
-* Refactor shared code
+* Hotkey?
+* Refactor shared code, especially from SoundCloud
 * Split search() out from every save() method

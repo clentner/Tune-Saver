@@ -2,10 +2,10 @@ import soundcloud
 import webbrowser
 from urllib.error import HTTPError
 
-from destinations.destination import Destination
+from services.service import Service
 
 
-class Soundcloud(Destination):
+class Soundcloud(Service):
     name = "SoundCloud"
 
     def __init__(self, config, cache_path=None):

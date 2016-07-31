@@ -1,13 +1,13 @@
 import requests
 import webbrowser
 
-from destinations.destination import Destination
+from services.service import Service
 
 correct_track_prompt = '''
 Opened your browser to a track download link.
 Was it the correct song? y/n '''
 
-class FMA(Destination):
+class FMA(Service):
     name = "Free Music Archive"
 
     def __init__(self, config):

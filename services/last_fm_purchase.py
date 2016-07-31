@@ -2,10 +2,10 @@ from bs4 import BeautifulSoup
 import requests
 import webbrowser
 
-from destinations.destination import Destination
+from services.service import Service
 
 
-class LastFmPurchase(Destination):
+class LastFmPurchase(Service):
     name = 'Last.fm Purchase link'
     
     def __init__(self, config):
