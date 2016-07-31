@@ -26,10 +26,10 @@ class SoundcloudDownload(Destination):
         if len(tracks) < 1:
             return (False, 'SoundCloud search found 0 tracks for {}'.format(q))
         sc_track = tracks[0]
-        if 'y' != input('Is "{}" the correct track? y/n '.format(sc_track.title)):
-            return (False, 'SoundCloud search found incorrect track for {}'.format(q))
         if not sc_track.downloadable:
             return (False, 'SoundCloud track not downloadable')
+        if 'y' != input('Is "{}" the correct track? y/n '.format(sc_track.title)):
+            return (False, 'SoundCloud search found incorrect track for {}'.format(q))
         download_url = sc_track.download_url + '?client_id=' + self.config['client_id']
         
         # download the song directly to the specified location
