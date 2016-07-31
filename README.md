@@ -39,6 +39,8 @@ call them services.
     - Implementation data, e.g. URL or UID
     - Prompt text, e.g. 'Buy this track for $1.29' or 'Save this track to SoundCloud?'
     - Offers ability to yield multiple potential tracks from one service
+    - search() yields potential tracks, save() actually saves/downloads/buys it
+    - Also removes the ugly 3 line 'if search worked' in every service's code
 * Intelligent title matching
 * Soundcloud purchase_url
 * Multiple playlist targets
