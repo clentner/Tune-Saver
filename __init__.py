@@ -2,7 +2,7 @@ import configparser
 import pylast
 
 from destinations import fma, soundcloud, spotify, jamendo, youtube
-from destinations import soundcloud_download
+from destinations import soundcloud_download, last_fm_purchase
 
 
 def most_current_track(last_fm_user):
@@ -63,8 +63,10 @@ def main():
         # Failing that, try to save to a streaming music service
         spotify.Spotify(config['Spotify']),
         soundcloud.Soundcloud(config['Soundcloud']),
-        # Last resort: maybe it's available in video form
-        youtube.Youtube(config['YouTube'])
+        # Last free resort: maybe it's available in video form
+        youtube.Youtube(config['YouTube']),
+        # If the track cannot be obtained for free, look for a way to buy it.
+        last_fm_purchase.LastFmPurchase(config['Last.fm']),
     ]
     # Main input loop
     while True:
