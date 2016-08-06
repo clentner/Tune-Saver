@@ -2,7 +2,7 @@ Tune Saver
 ==========
 Finds a way to save the currently playing song, by searching streaming services, music archives, and online stores.
 
-Here's how it words:
+Here's how it works:
 
 1. Play a song on any of the hundreds of sources supported by a Last.fm
 scrobbler (Pandora, YouTube, Spotify, Windows Media Player, Vevo...)
