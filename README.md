@@ -35,14 +35,7 @@ Comment out the appropriate service from the `destinations` array in
 
 Todo
 ----
-* Reduce config.ini load
-    - Possibly have a command line interface for filling it out
 * Make a proper module by adding a new directory
-* Investigate auth flows that don't involve client secrets.
-    - ~~Last.fm doesn't need one~~
-    - YouTube api just expose the client secret?
-    - ~~Spotify Implicit Grant flow~~
-    - ~~SoundCloud client side javascript flow~~
 * Refactor shared code, especially from SoundCloud
 * Playlist titles
 * Soundcloud purchase_url

@@ -19,11 +19,13 @@ YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 MISSING_CLIENT_SECRETS_MESSAGE = "WARNING: Please configure OAuth 2.0"
 
+client_secrets_file = 'youtube_client_secret.json'
+
 class Youtube(Service):
     name = "YouTube"
     
     def __init__(self, config):
-        self.youtube = self.get_authenticated_service(config['client_secrets_file'])
+        self.youtube = self.get_authenticated_service(client_secrets_file)
         self.config = config
     
     def get_authenticated_service(self, client_secrets_file):

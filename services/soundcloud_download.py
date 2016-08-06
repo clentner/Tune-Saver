@@ -7,6 +7,7 @@ import webbrowser
 from services.service import Service
 from servicetrack import ServiceTrack
 
+client_id = 'bf717ba60ed729e683d10bd636916b15'
 
 class SoundcloudDownload(Service):
     '''
@@ -17,7 +18,7 @@ class SoundcloudDownload(Service):
     name = "SoundCloud Download"
     
     def __init__(self, config):
-        self.client = soundcloud.Client(client_id = config['client_id'])
+        self.client = soundcloud.Client(client_id = client_id)
         self.config = config
         
     def search(self, track):
@@ -55,7 +56,7 @@ class SoundcloudDownload(Service):
         @return (success, message)
         '''
         sc_track = servicetrack.track
-        download_url = sc_track.download_url + '?client_id=' + self.config['client_id']
+        download_url = sc_track.download_url + '?client_id=' + client_id
         
         # download the song directly to the specified location
         # TODO: refactor this shared code

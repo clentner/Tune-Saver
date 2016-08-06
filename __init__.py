@@ -88,30 +88,36 @@ def main():
 
     # last.fm initialization
     last_fm = config['Last.fm']
-    ln = pylast.get_lastfm_network(api_key=last_fm['api_key'])
+    last_fm_api_key = 'bbad67cabcce9598501d485b701698f1'
+    ln = pylast.get_lastfm_network(api_key=last_fm_api_key)
     user = pylast.User(last_fm['username'], ln)
 
     # The order these appear in this list will determine the order they appear
     # in the selection prompt.
+    # List of (constructor, config) tuples
     service_constructors = [
         # Highest priority: The ability to download the track directly.
         # Try the services with better search capabilities first.
-        partial(jamendo.Jamendo, config['Jamendo']),
-        partial(fma.FMA, config['Free Music Archive']),
-        partial(soundcloud_download.SoundcloudDownload, config['Soundcloud']),
+        (jamendo.Jamendo, config['Jamendo']),
+        (fma.FMA, config['Free Music Archive']),
+        (soundcloud_download.SoundcloudDownload, config['Soundcloud']),
         # Failing that, try to save to a streaming music service
-        partial(spotify.Spotify, config['Spotify']),
-        partial(soundcloud.Soundcloud, config['Soundcloud']),
+        (spotify.Spotify, config['Spotify']),
+        (soundcloud.Soundcloud, config['Soundcloud']),
         # Last free resort: maybe it's available in video form
-        partial(youtube.Youtube, config['YouTube']),
+        (youtube.Youtube, config['YouTube']),
         # If the track cannot be obtained for free, look for a way to buy it.
-        partial(last_fm_purchase.LastFmPurchase, config['Last.fm']),
+        (last_fm_purchase.LastFmPurchase, config['Last.fm']),
     ]
     
     services = []
-    for sc in service_constructors:
+    for sc, config_section in service_constructors:
+        if not all(value for _,value in config_section.items()):
+            print('To use {}, fill out all of its fields in config.ini'.format(
+                config_section.name))
+            continue
         try:
-            services.append(sc())
+            services.append(sc(config_section))
         except Exception as e:
             # This service could not be initialized. Print the reason,
             # but continue attempting to initialize other services.

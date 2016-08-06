@@ -6,6 +6,8 @@ import webbrowser
 from services.service import Service
 from servicetrack import ServiceTrack
 
+client_id = 'c8186964'
+
 class Jamendo(Service):
     name = "Jamendo"
 
@@ -21,7 +23,7 @@ class Jamendo(Service):
         params = {
             'format': 'json',
             'limit': '1',
-            'client_id': self.config['client_id'],
+            'client_id': client_id,
             'artist_name': track.artist.name,
             'name': track.title
         }

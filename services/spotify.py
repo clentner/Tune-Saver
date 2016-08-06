@@ -8,6 +8,8 @@ import spotipy.util
 from services.service import Service
 from servicetrack import ServiceTrack
 
+client_id = 'e8df8c23cd3b48638da9a55041ee4641'
+
 class Spotify(Service):
     name = "Spotify"
 
@@ -38,7 +40,7 @@ class Spotify(Service):
         # Step 1. Your application requests authorization
         endpoint = 'https://accounts.spotify.com/authorize?'
         params = dict(
-            client_id=self.config['client_id'],
+            client_id=client_id,
             redirect_uri=redirect_uri,
             response_type='token')
         url = endpoint + urlencode(params)

@@ -6,6 +6,8 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlsplit, urlunsplit
 from services.service import Service
 from servicetrack import ServiceTrack
 
+client_id = 'bf717ba60ed729e683d10bd636916b15'
+
 def set_query_parameter(url, param_name, param_value):
     """Given a URL, set or replace a query parameter and return the
     modified URL.
@@ -30,7 +32,7 @@ class Soundcloud(Service):
     def __init__(self, config, cache_path=None):
         self.config = config
         self.client = soundcloud.Client(
-            client_id=config['client_id'],
+            client_id=client_id,
             #client_secret=config['client_secret'],
             redirect_uri='http://127.0.0.1/soundcloud'
         )
