@@ -10,6 +10,7 @@ from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
 
 from services.service import Service
+from servicetrack import ServiceTrack
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account.
@@ -21,24 +22,9 @@ MISSING_CLIENT_SECRETS_MESSAGE = "WARNING: Please configure OAuth 2.0"
 class Youtube(Service):
     name = "YouTube"
     
-    def search_first(self, query):
-        '''
-        Search youtube for `query` and return the id and title of the first result
-        Returns None on no video found.
-        video_id = result['id']['videoId']
-        video_title = result['snippet']['title']
-        '''
-        search_response = self.youtube.search().list(
-            q=query,
-            part="snippet",
-            maxResults=1,
-            type="video"
-        ).execute()
-        
-        if search_response['pageInfo']['totalResults'] < 1:
-            return None
-        
-        return search_response['items'][0]
+    def __init__(self, config):
+        self.youtube = self.get_authenticated_service(config['client_secrets_file'])
+        self.config = config
     
     def get_authenticated_service(self, client_secrets_file):
         '''
@@ -60,21 +46,47 @@ class Youtube(Service):
             http=credentials.authorize(httplib2.Http()))
             # developerKey=config['api_key']
     
-    def __init__(self, config):
-        self.youtube = self.get_authenticated_service(config['client_secrets_file'])
-        self.config = config
+    def search_first(self, query):
+        '''
+        Search youtube for `query` and return the id and title of the first result
+        Returns None on no video found.
+        video_id = result['id']['videoId']
+        video_title = result['snippet']['title']
+        '''
+        search_response = self.youtube.search().list(
+            q=query,
+            part="snippet",
+            maxResults=1,
+            type="video"
+        ).execute()
         
-    def save(self, track):
+        if search_response['pageInfo']['totalResults'] < 1:
+            return None
+        
+        return search_response['items'][0]
+        
+    def search(self, track):
+        '''
+        @param track A pylast track object
+        @return A list containing up to one ServiceTrack
+        '''
         q = track.artist.name + ' ' + track.title
         result = self.search_first(q)
         if not result:  # No video found
-            return (False, 'YouTube search returned 0 results for {}'.format(q))
+            return []
         video_id = result['id']['videoId']
         video_title = result['snippet']['title']
+        st = ServiceTrack('Insert "{}" into playlist'.format(video_title))
+        st.id = video_id
+        return [st]
         
-        if 'y' != input('Is "{}" the correct track? y/n '.format(video_title)):
-            return (False, 'YouTube search found incorrect track for {}'.format(q))
+    def save(self, servicetrack):
+        '''
+        Adds the track to the user's playlist
         
+        @param servicetrack A ServiceTrack object, generated from search()
+        @return (success, message)
+        '''
         playlists_insert_response = self.youtube.playlistItems().insert(
             part="snippet",
             body = {
@@ -82,7 +94,7 @@ class Youtube(Service):
                     "playlistId": self.config['playlist_id'],
                     "resourceId": {
                         "kind": "youtube#video",
-                        "videoId": video_id
+                        "videoId": servicetrack.id
                     }
                 }
             }

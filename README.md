@@ -32,12 +32,7 @@ Comment out the appropriate service from the `destinations` array in
 
 Todo
 ----
-* Make a class for potential track.
-    - Implementation data, e.g. URL or UID
-    - Prompt text, e.g. 'Buy this track for $1.29' or 'Save this track to SoundCloud?'
-    - Offers ability to yield multiple potential tracks from one service
-    - search() yields potential tracks, save() actually saves/downloads/buys it
-    - Also removes the ugly 3 line 'if search worked' in every service's code
+* Make a proper module by adding a new directory
 * Intelligent title matching
 * Soundcloud purchase_url
 * Multiple playlist targets
@@ -52,4 +47,3 @@ Todo
 * Playlist titles
 * Hotkey?
 * Refactor shared code, especially from SoundCloud
-* Split search() out from every save() method

@@ -1,6 +1,8 @@
 import spotipy
 import spotipy.util
+
 from services.service import Service
+from servicetrack import ServiceTrack
 
 class Spotify(Service):
     name = "Spotify"
@@ -28,24 +30,37 @@ class Spotify(Service):
         self.spotify = spotipy.Spotify(auth=token)
         self.spotify.trace = False
 
-    def save(self, track):
+    def search(self, track):
         '''
         @param track A pylast track object
-        @return True iff saving was successful
+        @return A list containing up to one ServiceTrack
         '''
         self._token_prompt()
         q = 'artist:"{}" track:"{}"'.format(
             track.artist.name,
-            track.title
-        )
+            track.title)
         try:
-            spotify_track = self.spotify.search(q, type='track', limit=1)["tracks"]["items"][0]["uri"]
-            results = self.spotify.user_playlist_add_tracks(
+            spotify_track = self.spotify.search(q, type='track', limit=1)["tracks"]["items"][0]
+        except IndexError:
+            return []
+        
+        st = ServiceTrack('Save "{}" to playlist'.format(spotify_track['name']))
+        st.track = spotify_track
+        return [st]
+        
+    def save(self, servicetrack):
+        '''
+        Adds the track to the user's playlist
+        
+        @param servicetrack A ServiceTrack object, generated from search()
+        @return (success, message)
+        '''
+        self._token_prompt()
+        spotify_track = servicetrack.track
+        # TODO: Will this raise an exception on failure?
+        results = self.spotify.user_playlist_add_tracks(
                 self.config['username'],
                 self.config['playlist_id'],
-                [spotify_track]
-            )
-            # print(results) # contains the snapshot id
-            return (True, "Saved to Spotify playlist")
-        except IndexError:
-            return (False, "Spotify search returned no results for {}".format(q))
+                [spotify_track["uri"]])
+        # print(results) # contains the snapshot id
+        return (True, "Saved to Spotify playlist")

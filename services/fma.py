@@ -2,6 +2,7 @@ import requests
 import webbrowser
 
 from services.service import Service
+from servicetrack import ServiceTrack
 
 correct_track_prompt = '''
 Opened your browser to a track download link.
@@ -17,7 +18,7 @@ class FMA(Service):
         '''
         Search the Free Music Archive for the track.
         @param track A pylast track object
-        @return the track ID (str), or None if not found.
+        @return A list containing up to one ServiceTrack
         '''
         searchURL = 'https://freemusicarchive.org/api/trackSearch'
         q = track.artist.name + ' - ' + track.title
@@ -31,23 +32,20 @@ class FMA(Service):
         
         # Kurt Vile's song Freeway is returned for all unsuccessful searches.
         if id == '10' and (track.artist.name != "Kurt Vile" or track.title != "Freeway"):
-            return None        
-        return id
+            return []
         
-    def save(self, track):
+        st = ServiceTrack('Download "{}" with your browser'.format(q))
+        st.id = id
+        return [st]
+        
+    def save(self, servicetrack):
         '''
-        @param track A pylast track object
-        @return True iff saving was successful
+        @param servicetrack A ServiceTrack object, generated from search()
+        @return (success, message)
         '''
-        # Search for the track using the API
-        q = track.artist.name + ' - ' + track.title
-        id = self.search(track)
-        if not id:
-            return (False, "Free Music Archive search did not find {}".format(q))
-
         # Get track's webpage URL
         track_endpoint = 'https://freemusicarchive.org/api/get/tracks.json'
-        params = {'track_id': id, 'limit': '1'}
+        params = {'track_id': servicetrack.id, 'limit': '1'}
         r = requests.get(track_endpoint, params=params)
         response = r.json()
         track_url = response["dataset"][0]["track_url"]
@@ -62,8 +60,4 @@ class FMA(Service):
         # Then open a download prompt via the web browser.
         # Downloads via script are blocked (likely based on user-agent).
         webbrowser.open(download_link)
-
-        # Ask the user if the file was correct (FMA's search is pretty bad)
-        if 'y' != input(correct_track_prompt):
-            return (False, 'Free Music Archive search found incorrect track.')
         return (True, 'Opened Free Music Archive download link.')

@@ -4,6 +4,7 @@ import shutil
 import webbrowser
 
 from services.service import Service
+from servicetrack import ServiceTrack
 
 class Jamendo(Service):
     name = "Jamendo"
@@ -14,7 +15,7 @@ class Jamendo(Service):
     def search(self, track):
         '''
         @param track A pylast track object
-        @return The download URL, if the track can be found. None otherwise.
+        @return A list containing up to one ServiceTrack
         '''
         endpoint = 'https://api.jamendo.com/v3.0/tracks/'
         params = {
@@ -28,33 +29,30 @@ class Jamendo(Service):
         response = r.json()
         if response['headers']['results_count'] < 1:
             # track not found
-            return None
-        return response['results'][0]['audiodownload']
+            return []
+        st = ServiceTrack('Download "{} - {}" as mp3 directly to {}'.format(
+            response['results'][0]['artist_name'],
+            response['results'][0]['name'],
+            self.config['save_directory']))
+        st.info = response['results'][0]
+        return [st]
         
-    def save(self, track):
+    def save(self, servicetrack):
         '''
-        @param track A pylast track object
-        @return True iff saving was successful
+        @param servicetrack A ServiceTrack object, generated from search()
+        @return (success, message)
         '''
-        download_url = self.search(track)
-        if not download_url:
-            return (False, "Jamendo search returned no results")
-        
-        if 'save_directory' in self.config:
-            # download the song directly to the specified location
-            filename = '{} - {}.mp3'.format(track.artist.name, track.title)
-            filepath = os.path.join(self.config['save_directory'], filename)
-            r = requests.get(download_url, stream=True)
-            if r.status_code == 200:
-                with open(filepath, 'wb') as f:
-                    r.raw.decode_content = True   # Uncompress gzipped content
-                    shutil.copyfileobj(r.raw, f)  # Save to disk
-                return (True, "Saved from Jamendo to {}".format(filepath))
-            else:
-                return (False, "Jamendo download URL returned status {}".format(r.status_code))
+        # download the song directly to the specified location
+        filename = '{} - {}.mp3'.format(
+            servicetrack.info['artist_name'], 
+            servicetrack.info['name'])
+        filepath = os.path.join(self.config['save_directory'], filename)
+        download_url = servicetrack.info['audiodownload']
+        r = requests.get(download_url, stream=True)
+        if r.status_code == 200:
+            with open(filepath, 'wb') as f:
+                r.raw.decode_content = True   # Uncompress gzipped content
+                shutil.copyfileobj(r.raw, f)  # Save to disk
+            return (True, "Saved from Jamendo to {}".format(filepath))
         else:
-            # punt the problem to someone else: open a 'Save As' dialogue via
-            # the browser.
-            webbrowser.open(download_url)
-            return (True, "Opened Jamendo download URL")
-        
+            return (False, "Jamendo download URL returned status {}".format(r.status_code))

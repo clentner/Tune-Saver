@@ -31,22 +31,54 @@ def most_current_track(last_fm_user):
 
 def save_track(track, services):
     '''
-    Loop through each service and attempt to save the given track.
+    Loop through each service. Get a list of potential tracks. Display them
+    to the user. Prompt the user for a selection. Save the selection.
     '''
+    #TODO: more comments
+    #TODO: refactor
+    potential_tracks = []
     for service in services:
         try:
-            success, message = service.save(track)
-            print(message)
-            if success:
-                return True
+            servicetracks = service.search(track)
+            for st in servicetracks:
+                potential_tracks.append((service, st))
         except Exception as e:
             # This looks bad, but there's a real reason to just eat the exception.
-            # For whatever reason, saving to one service caused an error. This is not
+            # For whatever reason, one service caused an error. This is not
             # cause for giving up on the other services.
             print(str(e))
-            print('Could not save to ' + service.name)
-    return False
-
+            print('Could not search ' + service.name)
+    
+    print('0. Cancel')
+    # TODO: use enumerate()
+    i = 1
+    for service, servicetrack in potential_tracks:
+        print('{}. {}: {}'.format(
+            i,
+            service.name,
+            servicetrack.prompt))
+        i += 1
+        
+    try:
+        st_number = int(input('\nSelect an option number: ')) - 1
+    except ValueError:
+        print('Not a number')
+        return
+    if st_number < 0:
+        # User selected the cancel option
+        return
+    if st_number >= len(potential_tracks):
+        print('Not a valid option')
+        return
+    
+    # TODO: failover to another service on False success or exception
+    try:
+        service, servicetrack = potential_tracks[st_number]
+        success, message = service.save(servicetrack)
+        print(message)
+    except Exception as e:
+        print(str(e))
+    
 
 def main():
     config = configparser.ConfigParser()
@@ -57,8 +89,8 @@ def main():
     ln = pylast.get_lastfm_network(api_key=last_fm['api_key'])
     user = pylast.User(last_fm['username'], ln)
 
-    # The order these appear in this list will determine the order of preference.
-    # If saving to/from one service succeeds, no others will be tried.
+    # The order these appear in this list will determine the order they appear
+    # in the selection prompt.
     services = [
         # Highest priority: The ability to download the track directly.
         # Try the services with better search capabilities first.
@@ -83,9 +115,7 @@ def main():
             continue
         print(track.artist.name, " - ", track.title)
 
-        success = save_track(track, services)
-        if not success:
-            print('Could not save to any service.')
+        save_track(track, services)
 
 if __name__ == '__main__':
     main()

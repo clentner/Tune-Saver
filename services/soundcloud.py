@@ -3,6 +3,7 @@ import webbrowser
 from urllib.error import HTTPError
 
 from services.service import Service
+from servicetrack import ServiceTrack
 
 
 class Soundcloud(Service):
@@ -46,12 +47,13 @@ class Soundcloud(Service):
         except IOError as e:
             # Being unable to cache the token isn't fatal.
             print(str(e))
-
-    def save(self, track):
+            
+    def search(self, track):
         '''
         @param track A pylast track object
-        @return True iff saving was successful
+        @return A list containing ServiceTrack objects
         '''
+        #TODO: return more than one track
         q = track.artist.name + ', ' + track.title
         # Seem to sometimes get limit-1 tracks in response.
         # For example, with q='golden coast'.
@@ -59,21 +61,31 @@ class Soundcloud(Service):
         tracks = self.client.get('/tracks', q=q, limit=2)
         if len(tracks) < 1:
             # Empty list returned
-            return (False, 'Soundcloud search found 0 tracks for {}'.format(q))
-        track = tracks[0]
+            return []
+        sc_track = tracks[0]
 
         # Handle SoundCloud's bad search by confirming with the user that it
         # has found the correct track.
-        if 'y' != input('Is "{}" the correct track? y/n '.format(track.title)):
-            return (False, 'Soundcloud search found incorrect track for {}'.format(q))
+        st = ServiceTrack('Save "{}" to playlist'.format(sc_track.title))
+        st.track = sc_track
+        return [st]
 
+    def save(self, servicetrack):
+        '''
+        Appends the track to the user's playlist
+        
+        @param servicetrack A ServiceTrack object, generated from search()
+        @return (success, message)
+        '''
         playlist_id = self.config['playlist_id']
+        # Get the current playlist contents
         tracklist = self.client.get('/playlists/' + playlist_id).tracks
-        tracklist.append(track.obj)
-        # Shrink network load by removing unneccessary information, and convert
-        # ids to strings
+        # Add this song to the playlist
+        tracklist.append(servicetrack.track.obj)
+        # Shrink network load by removing unneccessary information,
+        # and convert ids to strings for the API request
         t = [{'id': str(x["id"])} for x in tracklist]
-        # Add the track
+        # Add the track by uploading the new list
         r = self.client.put(
             '/playlists/' + playlist_id,
             playlist={"tracks": t}

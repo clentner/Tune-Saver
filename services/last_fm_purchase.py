@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
+import re
 import requests
+from urllib.parse import urlparse
 import webbrowser
 
 from services.service import Service
+from servicetrack import ServiceTrack
 
 
 class LastFmPurchase(Service):
@@ -16,25 +19,33 @@ class LastFmPurchase(Service):
         Checks the Last.fm track webpage for a purchase link.
         
         @param track A pylast track object
-        @return The purchase URL and the price
+        @return A list containing up to one ServiceTrack
         '''
         r = requests.get(track.get_url())
         soup = BeautifulSoup(r.text, "html.parser")
         buy_links = soup.find_all('a', attrs={'data-analytics-action': 'Buy|Direct'})
         if len(buy_links) == 0:
-            return None
-        return buy_links[0].get('href'), buy_links[0].get_text().strip()
+            return []
+        buy_link = buy_links[0].get('href')
+        price = buy_links[0].get_text().strip()
+        try:
+            price = re.search(r'(\$\d*\.\d+)', 'itunes $0.99  ').group(0)
+        except AttributeError:
+            pass
+        st = ServiceTrack('Buy "{} - {}" from {} for {}'.format(
+            track.artist.name,
+            track.title,
+            urlparse(buy_link).hostname,
+            price))
+        st.buy_link, st.price = buy_link, price
+        return [st]
     
-    def save(self, track):
+    def save(self, servicetrack):
         '''
-        Checks the Last.fm track webpage for a purchase link.
+        Opens the user's webbrowser to Last.fm's provided purchase link
         
-        @param track A pylast track object
+        @param servicetrack A ServiceTrack object, generated from search()
+        @return (success, message)
         '''
-        buy_link, price = self.search(track)
-        if not buy_link:
-            return (False, 'No buy link from Last.fm')
-        if 'y' != input('Buy track for {}? y/n '.format(price)):
-            return (False, 'Opted to not purchase track')
-        webbrowser.open(buy_link)
-        return (True, 'Purchase this track at {}'.format(buy_link))
+        webbrowser.open(servicetrack.buy_link)
+        return (True, 'Purchase this track at {}'.format(servicetrack.buy_link))
