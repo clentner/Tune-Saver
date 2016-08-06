@@ -33,7 +33,6 @@ Comment out the appropriate service from the `destinations` array in
 Todo
 ----
 * Make a proper module by adding a new directory
-* Intelligent title matching
 * Soundcloud purchase_url
 * Multiple playlist targets
 * Multiple tries with SoundCloud
