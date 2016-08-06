@@ -34,14 +34,11 @@ def save_track(track, services):
     Loop through each service. Get a list of potential tracks. Display them
     to the user. Prompt the user for a selection. Save the selection.
     '''
-    #TODO: more comments
-    #TODO: refactor
-    potential_tracks = []
+    # Search every service for potential tracks to save
+    potential_tracks = []  # list of (service, servicetrack) tuples
     for service in services:
         try:
-            servicetracks = service.search(track)
-            for st in servicetracks:
-                potential_tracks.append((service, st))
+            potential_tracks.extend((service, st) for st in service.search(track))
         except Exception as e:
             # This looks bad, but there's a real reason to just eat the exception.
             # For whatever reason, one service caused an error. This is not
@@ -49,8 +46,8 @@ def save_track(track, services):
             print(str(e))
             print('Could not search ' + service.name)
     
+    # Print the list of track sources
     print('0. Cancel')
-    # TODO: use enumerate()
     i = 1
     for service, servicetrack in potential_tracks:
         print('{}. {}: {}'.format(
@@ -58,26 +55,30 @@ def save_track(track, services):
             service.name,
             servicetrack.prompt))
         i += 1
+
+    # Prompt the user for a selection. Repeat until success or the user cancels.
+    success = False
+    while not success:
+        try:
+            st_number = int(input('\nSelect an option number: ')) - 1
+        except ValueError:
+            print('Enter an integer')
+            continue
+        if st_number >= len(potential_tracks):
+            print('Not a valid option')
+            continue
+        if st_number < 0:
+            # User selected the cancel option
+            print('Canceled.')
+            return
         
-    try:
-        st_number = int(input('\nSelect an option number: ')) - 1
-    except ValueError:
-        print('Not a number')
-        return
-    if st_number < 0:
-        # User selected the cancel option
-        return
-    if st_number >= len(potential_tracks):
-        print('Not a valid option')
-        return
-    
-    # TODO: failover to another service on False success or exception
-    try:
-        service, servicetrack = potential_tracks[st_number]
-        success, message = service.save(servicetrack)
-        print(message)
-    except Exception as e:
-        print(str(e))
+        # Save the track the user selected.
+        try:
+            service, servicetrack = potential_tracks[st_number]
+            success, message = service.save(servicetrack)
+            print(message)
+        except Exception as e:
+            print(str(e))
     
 
 def main():
