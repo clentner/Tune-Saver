@@ -1,3 +1,8 @@
+'''
+To avoid difficulty with Unicode song titles, set your IO encoding:
+    export PYTHONIOENCODING='UTF-8'
+'''
+
 import configparser
 import pylast
 
