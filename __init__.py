@@ -89,6 +89,9 @@ def main():
     # last.fm initialization
     last_fm = config['Last.fm']
     last_fm_api_key = 'bbad67cabcce9598501d485b701698f1'
+    if not last_fm['username']:
+        print('Last.fm is required to use Tune Saver. Provide your Last.fm username in config.ini')
+        quit()
     ln = pylast.get_lastfm_network(api_key=last_fm_api_key)
     user = pylast.User(last_fm['username'], ln)
 
