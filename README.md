@@ -20,7 +20,10 @@ Requires `beautifulsoup4`, `requests`, `google-api-python-client`, `pylast`,
 API Keys
 --------
 For testing, you will need to obtain API keys from the links provided in
-`config template.ini`. When this product is closer to a releasable form,
+`config template.ini`. Use the redirect uris in the relevant source file
+(under services/) when applying for a key.
+
+When this product is closer to a releasable form,
 keys will be included.
 
 
