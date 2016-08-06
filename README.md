@@ -17,21 +17,6 @@ Dependencies
 Requires `beautifulsoup4`, `requests`, `google-api-python-client`, `pylast`, 
 `soundcloud`, and `spotipy`, all of which are available through pip.
 
-API Keys
---------
-For testing, you will need to obtain API keys from the links provided in
-`config template.ini`. Use the redirect uris in the relevant source file
-(under services/) when applying for a key.
-
-When this product is closer to a releasable form,
-keys will be included.
-
-
-Enabling/disabling services
----------------------------
-Comment out the appropriate service from the `destinations` array in
-`__init__.py` to disable it.
-
 
 Todo
 ----
