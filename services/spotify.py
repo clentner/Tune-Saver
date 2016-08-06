@@ -23,7 +23,7 @@ class Spotify(Service):
             print('Authenticated to Spotify as ' +
                 me['display_name'])
         else:
-            print('Could not authenticate to Spotify')
+            raise Exception('Could not authenticate to Spotify')
 
     def _token_prompt(self):
         '''

@@ -4,6 +4,7 @@ To avoid difficulty with Unicode song titles, set your IO encoding:
 '''
 
 import configparser
+from functools import partial
 import pylast
 
 from services import fma, soundcloud, spotify, jamendo, youtube
@@ -92,20 +93,30 @@ def main():
 
     # The order these appear in this list will determine the order they appear
     # in the selection prompt.
-    services = [
+    service_constructors = [
         # Highest priority: The ability to download the track directly.
         # Try the services with better search capabilities first.
-        jamendo.Jamendo(config['Jamendo']),
-        fma.FMA(config['Free Music Archive']),
-        soundcloud_download.SoundcloudDownload(config['Soundcloud']),
+        partial(jamendo.Jamendo, config['Jamendo']),
+        partial(fma.FMA, config['Free Music Archive']),
+        partial(soundcloud_download.SoundcloudDownload, config['Soundcloud']),
         # Failing that, try to save to a streaming music service
-        spotify.Spotify(config['Spotify']),
-        soundcloud.Soundcloud(config['Soundcloud']),
+        partial(spotify.Spotify, config['Spotify']),
+        partial(soundcloud.Soundcloud, config['Soundcloud']),
         # Last free resort: maybe it's available in video form
-        youtube.Youtube(config['YouTube']),
+        partial(youtube.Youtube, config['YouTube']),
         # If the track cannot be obtained for free, look for a way to buy it.
-        last_fm_purchase.LastFmPurchase(config['Last.fm']),
+        partial(last_fm_purchase.LastFmPurchase, config['Last.fm']),
     ]
+    
+    services = []
+    for sc in service_constructors:
+        try:
+            services.append(sc())
+        except Exception as e:
+            # This service could not be initialized. Print the reason,
+            # but continue attempting to initialize other services.
+            print(str(e))
+    
     # Main input loop
     while True:
         input('\nPress enter to save song')

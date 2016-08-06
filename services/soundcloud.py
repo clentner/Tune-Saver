@@ -63,8 +63,7 @@ class Soundcloud(Service):
             try:
                 token = parse_qs(urlparse(redirect_url).fragment)['access_token'][0]
             except KeyError:
-                print('Authentication to SoundCloud failed. No access token found in URL.')
-                return
+                raise Exception('Authentication to SoundCloud failed. No access token found in URL.')
             self.client.access_token = token
             self._save_cached_token(self.client.access_token)
         print("Authenticated to SoundCloud as %s" %

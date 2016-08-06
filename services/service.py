@@ -20,7 +20,10 @@ class Service(metaclass=ABCMeta):
         identifiers, folder paths, and so on can be stored.
         
         The `config` param functions like a dictionary.
-        The keys are up to the destination implementation.
+        The keys are up to the service implementation.
+        
+        This method should raise an exception if the service's server cannot
+        be reached or if authentication fails.
         '''
         pass
         

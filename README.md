@@ -35,7 +35,6 @@ Comment out the appropriate service from the `destinations` array in
 
 Todo
 ----
-* Make service initialization more robust
 * Reduce config.ini load
     - Possibly have a command line interface for filling it out
 * Make a proper module by adding a new directory
