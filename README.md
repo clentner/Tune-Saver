@@ -33,16 +33,16 @@ Comment out the appropriate service from the `destinations` array in
 Todo
 ----
 * Make a proper module by adding a new directory
-* Soundcloud purchase_url
-* Multiple playlist targets
-* Multiple tries with SoundCloud
-* Proper OAuth2 via custom URI
-    - Use the client used for YouTube?
 * Investigate auth flows that don't involve client secrets.
     - Last.fm doesn't need one
     - YouTube api just expose the client secret?
     - Spotify Implicit Grant flow
     - SoundCloud client side javascript flow?
-* Playlist titles
-* Hotkey?
 * Refactor shared code, especially from SoundCloud
+* Playlist titles
+* Soundcloud purchase_url
+* Multiple playlist targets
+* Multiple tries with SoundCloud
+* Proper OAuth2 via custom URI
+    - Use the client used for YouTube?
+* Hotkey?
