@@ -1,9 +1,27 @@
 import soundcloud
 import webbrowser
 from urllib.error import HTTPError
+from urllib.parse import parse_qs, urlencode, urlparse, urlsplit, urlunsplit
 
 from services.service import Service
 from servicetrack import ServiceTrack
+
+def set_query_parameter(url, param_name, param_value):
+    """Given a URL, set or replace a query parameter and return the
+    modified URL.
+
+    >>> set_query_parameter('http://example.com?foo=bar&biz=baz', 'foo', 'stuff')
+    'http://example.com?foo=stuff&biz=baz'
+    
+    http://stackoverflow.com/questions/4293460/how-to-add-custom-parameters-to-an-url-query-string-with-python
+    """
+    scheme, netloc, path, query_string, fragment = urlsplit(url)
+    query_params = parse_qs(query_string)
+    
+    query_params[param_name] = [param_value]
+    new_query_string = urlencode(query_params, doseq=True)
+    
+    return urlunsplit((scheme, netloc, path, new_query_string, fragment))
 
 
 class Soundcloud(Service):
@@ -13,7 +31,7 @@ class Soundcloud(Service):
         self.config = config
         self.client = soundcloud.Client(
             client_id=config['client_id'],
-            client_secret=config['client_secret'],
+            #client_secret=config['client_secret'],
             redirect_uri='http://127.0.0.1/soundcloud'
         )
         # check for cached access token
@@ -24,9 +42,30 @@ class Soundcloud(Service):
           
         self.client.access_token = self._get_cached_token()
         if not self.client.access_token:
-            webbrowser.open(self.client.authorize_url())
-            code = input('Soundcloud code: ')
-            response = self.client.exchange_token(code=code)
+            # Authenticate to SoundCloud, without needing to provide a client secret.
+            # This is a bit of a patch job, because the SoundCloud python client
+            # doesn't support this flow (it's normally used for clientside javascript).
+            #
+            # A few modifications are needed:
+            #
+            # 1. Use a response type of 'code_and_token' instead of just 'code'
+            #    This means we do not need to exchange a code for a token,
+            #    which is good, because the exchange requires a client secret.
+            #
+            # 2. Manually set the `client.access_token` field once the token
+            #    has been obtained. This is normally done within a flow called
+            #    internally by the client.
+            auth_url = self.client.authorize_url()
+            auth_url = set_query_parameter(auth_url, 'response_type', 'code_and_token')
+            webbrowser.open(auth_url)
+            redirect_url = input('Enter the URL to which you were redirected: ')
+            # Extract the token from the URL
+            try:
+                token = parse_qs(urlparse(redirect_url).fragment)['access_token'][0]
+            except KeyError:
+                print('Authentication to SoundCloud failed. No access token found in URL.')
+                return
+            self.client.access_token = token
             self._save_cached_token(self.client.access_token)
         print("Authenticated to SoundCloud as %s" %
                 self.client.get('/me').username)
@@ -53,6 +92,9 @@ class Soundcloud(Service):
         @param track A pylast track object
         @return A list containing ServiceTrack objects
         '''
+        # Can't save tracks to a playlist without being authenticated.
+        if not hasattr(self.client, 'access_token') or not self.client.access_token:
+            return []
         #TODO: return more than one track
         q = track.artist.name + ', ' + track.title
         # Seem to sometimes get limit-1 tracks in response.

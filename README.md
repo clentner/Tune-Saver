@@ -37,10 +37,10 @@ Todo
 ----
 * Make a proper module by adding a new directory
 * Investigate auth flows that don't involve client secrets.
-    - Last.fm doesn't need one
+    - ~~Last.fm doesn't need one~~
     - YouTube api just expose the client secret?
     - Spotify Implicit Grant flow
-    - SoundCloud client side javascript flow?
+    - ~~SoundCloud client side javascript flow~~
 * Refactor shared code, especially from SoundCloud
 * Playlist titles
 * Soundcloud purchase_url
@@ -48,4 +48,5 @@ Todo
 * Multiple tries with SoundCloud
 * Proper OAuth2 via custom URI
     - Use the client used for YouTube?
+* Remove need for list_soundcloud_playlists tool
 * Hotkey?
