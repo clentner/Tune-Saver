@@ -1,3 +1,7 @@
+from datetime import datetime, timedelta
+from urllib.parse import parse_qs, urlencode, urlparse
+import webbrowser
+
 import spotipy
 import spotipy.util
 
@@ -13,29 +17,56 @@ class Spotify(Service):
         # first run of the program. It is also called on every save(), as
         # a lazy method of refreshing. Subsequent calls do not require
         # user interaction.
-        self._token_prompt()
-        print('Authenticated to Spotify as ' +
-              self.spotify.me()['display_name'])
+        if self._token_prompt():
+            me = self.spotify.me()
+            self.username = me['id']
+            print('Authenticated to Spotify as ' +
+                me['display_name'])
+        else:
+            print('Could not authenticate to Spotify')
 
     def _token_prompt(self):
+        '''
+        Authenticate to Spotify using the Implicit Grant Flow.
+        '''
+        # Check to see if we already have an unexpired access token
+        if hasattr(self, 'token_expiry_time') and datetime.now() < self.token_expiry_time:
+            return True
+        # Obtain a new access token.
         scope = 'playlist-modify-public'
         redirect_uri = "http://127.0.0.1/spotify"
-        token = spotipy.util.prompt_for_user_token(
-            self.config['username'],
-            scope=scope,
+        # Step 1. Your application requests authorization
+        endpoint = 'https://accounts.spotify.com/authorize?'
+        params = dict(
             client_id=self.config['client_id'],
-            client_secret=self.config['client_secret'],
-            redirect_uri=redirect_uri
-        )
+            redirect_uri=redirect_uri,
+            response_type='token')
+        url = endpoint + urlencode(params)
+        webbrowser.open(url)
+        # Step 2. The user is asked to authorize access within the scopes
+        # Step 3. The user is redirected back to your specified URI
+        redirect_url = input('Enter the URL to which you were redirected: ')
+        try:
+            query_dict = parse_qs(urlparse(redirect_url).fragment)
+            expires_in = query_dict['expires_in'][0]
+            self.token_expiry_time = datetime.now() + timedelta(0, int(expires_in))
+            token = query_dict['access_token'][0]
+        except KeyError:
+            print('Authentication to Spotify failed. No access token found in URL.')
+            return False
+        except ValueError:
+            print('Invalid expires_in value')
+            return False
+        # Step 4. Use the access token to access the Spotify Web API
         self.spotify = spotipy.Spotify(auth=token)
         self.spotify.trace = False
+        return True
 
     def search(self, track):
         '''
         @param track A pylast track object
         @return A list containing up to one ServiceTrack
         '''
-        self._token_prompt()
         q = 'artist:"{}" track:"{}"'.format(
             track.artist.name,
             track.title)
@@ -59,7 +90,7 @@ class Spotify(Service):
         spotify_track = servicetrack.track
         # TODO: Will this raise an exception on failure?
         results = self.spotify.user_playlist_add_tracks(
-                self.config['username'],
+                self.username,
                 self.config['playlist_id'],
                 [spotify_track["uri"]])
         # print(results) # contains the snapshot id

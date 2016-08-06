@@ -35,17 +35,21 @@ Comment out the appropriate service from the `destinations` array in
 
 Todo
 ----
+* Make service initialization more robust
+* Reduce config.ini load
+    - Possibly have a command line interface for filling it out
 * Make a proper module by adding a new directory
 * Investigate auth flows that don't involve client secrets.
     - ~~Last.fm doesn't need one~~
     - YouTube api just expose the client secret?
-    - Spotify Implicit Grant flow
+    - ~~Spotify Implicit Grant flow~~
     - ~~SoundCloud client side javascript flow~~
 * Refactor shared code, especially from SoundCloud
 * Playlist titles
 * Soundcloud purchase_url
 * Multiple playlist targets
 * Multiple tries with SoundCloud
+* Abstract out shared OAuth flows
 * Proper OAuth2 via custom URI
     - Use the client used for YouTube?
 * Remove need for list_soundcloud_playlists tool
