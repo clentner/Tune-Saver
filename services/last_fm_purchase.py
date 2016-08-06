@@ -29,7 +29,7 @@ class LastFmPurchase(Service):
         buy_link = buy_links[0].get('href')
         price = buy_links[0].get_text().strip()
         try:
-            price = re.search(r'(\$\d*\.\d+)', 'itunes $0.99  ').group(0)
+            price = re.search(r'(\$\d*\.\d+)', price).group(0)
         except AttributeError:
             pass
         st = ServiceTrack('Buy "{} - {}" from {} for {}'.format(
