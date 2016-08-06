@@ -39,8 +39,6 @@ class SoundcloudDownload(Service):
         if not sc_track.downloadable:
             return []
 
-        # Handle SoundCloud's bad search by confirming with the user that it
-        # has found the correct track.
         st = ServiceTrack('Download "{}" to {}'.format(
             sc_track.title,
             self.config['save_directory']))

@@ -64,8 +64,6 @@ class Soundcloud(Service):
             return []
         sc_track = tracks[0]
 
-        # Handle SoundCloud's bad search by confirming with the user that it
-        # has found the correct track.
         st = ServiceTrack('Save "{}" to playlist'.format(sc_track.title))
         st.track = sc_track
         return [st]
