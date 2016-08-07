@@ -50,7 +50,7 @@ class SoundcloudDownload(Service):
         
     def save(self, servicetrack):
         '''
-        Appends the track to the user's playlist
+        Download the track directly
         
         @param servicetrack A ServiceTrack object, generated from search()
         @return (success, message)
