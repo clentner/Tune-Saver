@@ -31,19 +31,33 @@ class Soundcloud(Service):
 
     def __init__(self, config, cache_path=None):
         self.config = config
-        self.client = soundcloud.Client(
+        self.client = self.get_authenticated_client(cache_path)
+        print("Authenticated to SoundCloud as %s" %
+                self.client.get('/me').username)
+        self.playlist_title = self.client.get('/playlists/{}'.format(
+            config['playlist_id'])
+            ).title
+        print('Using SoundCloud playlist "{}"'.format(self.playlist_title))
+                
+    def get_authenticated_client(self, cache_path=None):
+        '''
+        Do the heavy OAuth2 lifting and return an authenticated SoundCloud
+        client instance.
+        
+        Raises Exception on failure.
+        '''
+        client = soundcloud.Client(
             client_id=client_id,
-            #client_secret=config['client_secret'],
             redirect_uri='http://127.0.0.1/soundcloud'
         )
         # check for cached access token
         if cache_path is not None:
             self.cache_path = cache_path
         else:
-            self.cache_path = '.soundcloud-cache-' + config['playlist_id']
+            self.cache_path = '.soundcloud-cache-' + self.config['playlist_id']
           
-        self.client.access_token = self._get_cached_token()
-        if not self.client.access_token:
+        client.access_token = self._get_cached_token()
+        if not client.access_token:
             # Authenticate to SoundCloud, without needing to provide a client secret.
             # This is a bit of a patch job, because the SoundCloud python client
             # doesn't support this flow (it's normally used for clientside javascript).
@@ -57,7 +71,7 @@ class Soundcloud(Service):
             # 2. Manually set the `client.access_token` field once the token
             #    has been obtained. This is normally done within a flow called
             #    internally by the client.
-            auth_url = self.client.authorize_url()
+            auth_url = client.authorize_url()
             auth_url = set_query_parameter(auth_url, 'response_type', 'code_and_token')
             webbrowser.open(auth_url)
             redirect_url = input('Enter the URL to which you were redirected: ')
@@ -66,10 +80,9 @@ class Soundcloud(Service):
                 token = parse_qs(urlparse(redirect_url).fragment)['access_token'][0]
             except KeyError:
                 raise Exception('Authentication to SoundCloud failed. No access token found in URL.')
-            self.client.access_token = token
-            self._save_cached_token(self.client.access_token)
-        print("Authenticated to SoundCloud as %s" %
-                self.client.get('/me').username)
+            client.access_token = token
+            self._save_cached_token(client.access_token)
+        return client
 
     def _get_cached_token(self):
         token = None
@@ -132,6 +145,6 @@ class Soundcloud(Service):
             playlist={"tracks": t}
         )
         if r.status_code == 200:
-            return (True, 'Added track to SoundCloud playlist {}'.format(playlist_id))
+            return (True, 'Added track to SoundCloud playlist "{}"'.format(self.playlist_title))
         else:
             return (False, 'SoundCloud playlist returned status code {}'.format(r.status_code))
