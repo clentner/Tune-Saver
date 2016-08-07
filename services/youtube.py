@@ -26,6 +26,15 @@ class Youtube(Service):
     
     def __init__(self, config):
         self.youtube = self.get_authenticated_service(client_secrets_file)
+        playlist_snippet = self.youtube.playlists().list(
+            part="snippet",
+            id=config['playlist_id']
+            ).execute()['items'][0]['snippet']
+        self.playlist_title = playlist_snippet['title']
+        self.channel_title = playlist_snippet['channelTitle']
+        print('Using YouTube playlist "{}" by {}'.format(
+            self.playlist_title,
+            self.channel_title))
         self.config = config
     
     def get_authenticated_service(self, client_secrets_file):
@@ -78,7 +87,7 @@ class Youtube(Service):
             return []
         video_id = result['id']['videoId']
         video_title = result['snippet']['title']
-        st = ServiceTrack('Insert "{}" into playlist'.format(video_title))
+        st = ServiceTrack('Save "{}" to playlist'.format(video_title))
         st.id = video_id
         return [st]
         
@@ -103,4 +112,5 @@ class Youtube(Service):
         ).execute()
         # Assume success; an HttpError would have been raised on failure.
         # That exception will be handled by the main module.
-        return (True, 'Saved to YouTube playlist')
+        return (True, 'Saved to YouTube playlist {}'.format(
+            self.playlist_title))
