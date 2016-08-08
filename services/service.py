@@ -1,4 +1,8 @@
 from abc import abstractmethod, ABCMeta
+import os
+import re
+import requests
+import shutil
 
 
 class Service(metaclass=ABCMeta):
@@ -52,3 +56,26 @@ class Service(metaclass=ABCMeta):
                 "Spotify add returned status 500"
         '''
         pass
+        
+    def download(self, url, artist, title, extension):
+        '''
+        Download the file at `url` to "{save_directory}\{artist} - {title}.{extension}".
+        Raise HTTPError on non-200 status.
+        
+        Convenience method. Services are not required to implement nor call this method.
+        @param url The url from which to download the song
+        @param artist The artist name
+        @param title The song title
+        @param extension File extension, e.g. '.mp3'
+        @return filepath to the downloaded song
+        '''
+        filename = '{} - {}.{}'.format(artist, title, extension)
+        # Quick pass at making the filename legal
+        filename = re.sub(r'[/\\:*?"<>|]', '_', filename)
+        filepath = os.path.join(self.config['save_directory'], filename)
+        r = requests.get(url, stream=True)
+        r.raise_for_status()
+        with open(filepath, 'wb') as f:
+            r.raw.decode_content = True   # Uncompress gzipped content
+            shutil.copyfileobj(r.raw, f)  # Save to disk
+        return filepath

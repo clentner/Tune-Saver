@@ -1,6 +1,3 @@
-import os
-import requests
-import shutil
 import soundcloud
 import webbrowser
 
@@ -47,19 +44,9 @@ class SoundcloudDownload(soundcloud_service.Soundcloud):
         sc_track = servicetrack.track
         download_url = sc_track.download_url + \
             '?client_id=' + soundcloud_service.client_id
-        
-        # download the song directly to the specified location
-        # TODO: refactor this shared code
-        filename = os.path.join(
-            self.config['save_directory'],
-            '{} - {}.mp3'.format(
-                servicetrack.artist,
-                servicetrack.title))
-        r = requests.get(download_url, stream=True)
-        if r.status_code == 200:
-            with open(filename, 'wb') as f:
-                r.raw.decode_content = True
-                shutil.copyfileobj(r.raw, f)
-            return (True, "Saved from SoundCloud to {}".format(filename))
-        else:
-            return (False, "SoundCloud download URL returned status {}".format(r.status_code))
+        filename = self.download(
+            download_url,
+            servicetrack.artist,
+            servicetrack.title,
+            'mp3')
+        return (True, "Saved from SoundCloud to {}".format(filename))

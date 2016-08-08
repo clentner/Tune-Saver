@@ -1,7 +1,4 @@
-import os
 import requests
-import shutil
-import webbrowser
 
 from services.service import Service
 from servicetrack import ServiceTrack
@@ -44,17 +41,9 @@ class Jamendo(Service):
         @param servicetrack A ServiceTrack object, generated from search()
         @return (success, message)
         '''
-        # download the song directly to the specified location
-        filename = '{} - {}.mp3'.format(
-            servicetrack.info['artist_name'], 
-            servicetrack.info['name'])
-        filepath = os.path.join(self.config['save_directory'], filename)
-        download_url = servicetrack.info['audiodownload']
-        r = requests.get(download_url, stream=True)
-        if r.status_code == 200:
-            with open(filepath, 'wb') as f:
-                r.raw.decode_content = True   # Uncompress gzipped content
-                shutil.copyfileobj(r.raw, f)  # Save to disk
-            return (True, "Saved from Jamendo to {}".format(filepath))
-        else:
-            return (False, "Jamendo download URL returned status {}".format(r.status_code))
+        filepath = self.download(
+            servicetrack.info['audiodownload'],
+            servicetrack.info['artist_name'],
+            servicetrack.info['name'],
+            'mp3')
+        return (True, "Saved from Jamendo to {}".format(filepath))
