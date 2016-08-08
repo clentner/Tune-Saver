@@ -24,6 +24,12 @@ class Spotify(Service):
             self.username = me['id']
             print('Authenticated to Spotify as ' +
                 me['display_name'])
+            self.playlist_title = self.spotify.user_playlist(
+                self.username,
+                config['playlist_id']
+            )['name']
+            print('Using Spotify playlist "{}"'.format(
+                self.playlist_title))
         else:
             raise Exception('Could not authenticate to Spotify')
 
@@ -42,7 +48,8 @@ class Spotify(Service):
         params = dict(
             client_id=client_id,
             redirect_uri=redirect_uri,
-            response_type='token')
+            response_type='token',
+            scope=scope)
         url = endpoint + urlencode(params)
         webbrowser.open(url)
         # Step 2. The user is asked to authorize access within the scopes
@@ -96,4 +103,5 @@ class Spotify(Service):
                 self.config['playlist_id'],
                 [spotify_track["uri"]])
         # print(results) # contains the snapshot id
-        return (True, "Saved to Spotify playlist")
+        return (True, 'Saved to Spotify playlist "{}"'.format(
+            self.playlist_title))

@@ -40,13 +40,12 @@ Todo
 ----
 * Make a proper module by adding a new directory
 * Refactor shared code, especially from SoundCloud
-* Playlist titles
 * Soundcloud purchase_url
-* Proper OAuth2 via custom URI
-    - Use the client used for YouTube?
-* Abstract out shared OAuth flows
 * Short demo video showing usage
 * Multiple tries with SoundCloud
 * Remove need for list_soundcloud_playlists tool
 * Multiple playlist targets
 * Hotkey?
+* Listen on localhost for OAuth
+    - Use the client used for YouTube?
+* Abstract out shared OAuth flows
