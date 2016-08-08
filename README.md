@@ -24,7 +24,7 @@ Usage
     - Provide your Last.fm username
     - Provide the path to a directory in which mp3 downloads will be saved, for Jamendo and Soundcloud
     - Find playlist IDs for SoundCloud (use `util/list_soundcloud_playlists.py`), YouTube and Spotify (copy from the playlist URL)
-* Launch Tune Saver with `python3 __init__.py`
+* Launch Tune Saver with `python3 -m tune_saver`
 * Login prompts will be displayed for some services
 * Press enter to save a song.
 * A list of services will be displayed. Enter the number of the desired service.
@@ -39,7 +39,6 @@ Requires `beautifulsoup4`, `requests`, `google-api-python-client`, `pylast`,
 
 Todo
 ----
-* Make a proper module by adding a new directory
 * Refactor shared code, especially from SoundCloud
 * Soundcloud purchase_url
 * Multiple tries with SoundCloud
