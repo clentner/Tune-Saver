@@ -134,7 +134,8 @@ def main():
         if not track:
             print('Could not get a track from Last.fm.')
             continue
-        print(track.artist.name, " - ", track.title)
+        print('\nNow Playing: {} - {}\n'.format(
+            track.artist.name, track.title))
 
         save_track(track, services)
 
