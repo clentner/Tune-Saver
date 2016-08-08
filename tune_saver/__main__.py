@@ -7,7 +7,7 @@ import configparser
 from functools import partial
 import pylast
 
-from services import fma, soundcloud, spotify, jamendo, youtube
+from services import fma, soundcloud_playlist, spotify, jamendo, youtube
 from services import soundcloud_download, last_fm_purchase
 
 
@@ -106,7 +106,7 @@ def main():
         (soundcloud_download.SoundcloudDownload, config['Soundcloud']),
         # Failing that, try to save to a streaming music service
         (spotify.Spotify, config['Spotify']),
-        (soundcloud.Soundcloud, config['Soundcloud']),
+        (soundcloud_playlist.SoundcloudPlaylist, config['Soundcloud']),
         # Last free resort: maybe it's available in video form
         (youtube.Youtube, config['YouTube']),
         # If the track cannot be obtained for free, look for a way to buy it.

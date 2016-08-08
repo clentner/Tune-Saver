@@ -6,10 +6,9 @@ import webbrowser
 
 from services.service import Service
 from servicetrack import ServiceTrack
+from services import soundcloud_service
 
-client_id = 'bf717ba60ed729e683d10bd636916b15'
-
-class SoundcloudDownload(Service):
+class SoundcloudDownload(soundcloud_service.Soundcloud):
     '''
     Looks for the "Free Download" option on SoundCloud tracks.
     
@@ -18,7 +17,7 @@ class SoundcloudDownload(Service):
     name = "SoundCloud Download"
     
     def __init__(self, config):
-        self.client = soundcloud.Client(client_id = client_id)
+        self.client = soundcloud.Client(client_id = soundcloud_service.client_id)
         self.config = config
         
     def search(self, track):
@@ -26,18 +25,8 @@ class SoundcloudDownload(Service):
         @param track A pylast track object
         @return A list containing ServiceTrack objects
         '''
-        #TODO: REFACTOR SHARED CODE
-        #TODO: return more than one track
-        q = track.artist.name + ', ' + track.title
-        # Seem to sometimes get limit-1 tracks in response.
-        # For example, with q='golden coast'.
-        # Compensate for now by setting a limit of 2
-        tracks = self.client.get('/tracks', q=q, limit=2)
-        if len(tracks) < 1:
-            # Empty list returned
-            return []
-        sc_track = tracks[0]
-        if not sc_track.downloadable:
+        sc_track = self.search_first(track)
+        if not sc_track or not sc_track.downloadable:
             return []
 
         st = ServiceTrack('Download "{}" to {}'.format(
@@ -56,7 +45,8 @@ class SoundcloudDownload(Service):
         @return (success, message)
         '''
         sc_track = servicetrack.track
-        download_url = sc_track.download_url + '?client_id=' + client_id
+        download_url = sc_track.download_url + \
+            '?client_id=' + soundcloud_service.client_id
         
         # download the song directly to the specified location
         # TODO: refactor this shared code

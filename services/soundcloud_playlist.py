@@ -5,8 +5,7 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlsplit, urlunsplit
 
 from services.service import Service
 from servicetrack import ServiceTrack
-
-client_id = 'bf717ba60ed729e683d10bd636916b15'
+from services import soundcloud_service
 
 def set_query_parameter(url, param_name, param_value):
     """Given a URL, set or replace a query parameter and return the
@@ -26,8 +25,8 @@ def set_query_parameter(url, param_name, param_value):
     return urlunsplit((scheme, netloc, path, new_query_string, fragment))
 
 
-class Soundcloud(Service):
-    name = "SoundCloud"
+class SoundcloudPlaylist(soundcloud_service.Soundcloud):
+    name = "SoundCloud Playlist"
 
     def __init__(self, config, cache_path=None):
         self.config = config
@@ -47,7 +46,7 @@ class Soundcloud(Service):
         Raises Exception on failure.
         '''
         client = soundcloud.Client(
-            client_id=client_id,
+            client_id=soundcloud_service.client_id,
             redirect_uri='http://127.0.0.1/soundcloud'
         )
         # check for cached access token
@@ -106,19 +105,9 @@ class Soundcloud(Service):
         @param track A pylast track object
         @return A list containing ServiceTrack objects
         '''
-        # Can't save tracks to a playlist without being authenticated.
-        if not hasattr(self.client, 'access_token') or not self.client.access_token:
+        sc_track = self.search_first(track)
+        if not sc_track:
             return []
-        #TODO: return more than one track
-        q = track.artist.name + ', ' + track.title
-        # Seem to sometimes get limit-1 tracks in response.
-        # For example, with q='golden coast'.
-        # Compensate for now by setting a limit of 2
-        tracks = self.client.get('/tracks', q=q, limit=2)
-        if len(tracks) < 1:
-            # Empty list returned
-            return []
-        sc_track = tracks[0]
 
         st = ServiceTrack('Save "{}" to playlist'.format(sc_track.title))
         st.track = sc_track

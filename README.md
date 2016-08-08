@@ -23,7 +23,7 @@ Usage
 * Fill out the fields in `config.ini`, for any services you wish to use. Any service with empty fields will be disabled.
     - Provide your Last.fm username
     - Provide the path to a directory in which mp3 downloads will be saved, for Jamendo and Soundcloud
-    - Find playlist IDs for SoundCloud (use `util/list_soundcloud_playlists.py`), YouTube and Spotify (copy from the playlist URL)
+    - Find playlist IDs for SoundCloud (use `list_soundcloud_playlists.py`), YouTube and Spotify (copy from the playlist URL)
 * Launch Tune Saver with `python3 -m tune_saver`
 * Login prompts will be displayed for some services
 * Press enter to save a song.
@@ -39,7 +39,7 @@ Requires `beautifulsoup4`, `requests`, `google-api-python-client`, `pylast`,
 
 Todo
 ----
-* Refactor shared code, especially from SoundCloud
+* Refactor shared code
 * Soundcloud purchase_url
 * Multiple tries with SoundCloud
 * Remove need for list_soundcloud_playlists tool
