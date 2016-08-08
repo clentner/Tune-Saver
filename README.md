@@ -14,6 +14,7 @@ Jamendo, the Free Music Archive, SoundCloud, Spotify, and YouTube.
 5. The song will be downloaded or added to a playlist automatically.
 For purchase websites, your web browser will be opened to the song.
 
+![Saving a song to Spotify with Tune Saver](images/tunesaver.gif)
 
 Usage
 -----
