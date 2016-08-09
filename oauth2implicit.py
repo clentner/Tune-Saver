@@ -97,6 +97,8 @@ class ClientRedirectHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             # First get request has the query parameters in a hash fragment, inaccessible
             # to this code.
             # Serve JavaScript which will move the query parameters into the regular URL.
+            # Sentinel value to code controlling server
+            self.server.query_params = {'first request': ''}
             self.wfile.write(
                 b"""<html><head><script>var loc=window.location.href.replace(/#/, '?');
                 window.location.href=loc.replace(/\?\?/, '?');</script></head><body>
@@ -138,7 +140,8 @@ def run_flow(authorize_url, port=8080):
     params = None
     if not noauth_local_webserver:
         httpd.handle_request()
-        if not hasattr(httpd, 'query_params'):
+        # Check for sentinel value indicating the params are still in the fragment
+        if 'first request' in httpd.query_params:
             # The javascript was delivered to refresh the page with the
             # query params moved out of the fragment. Handle this new
             # request to actually get those params.
