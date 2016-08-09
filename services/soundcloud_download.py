@@ -47,8 +47,9 @@ class SoundcloudDownload(soundcloud_service.Soundcloud):
         @return (success, message)
         '''
         sc_track = servicetrack.track
-        download_url = sc_track.download_url + \
-            '?client_id=' + soundcloud_service.client_id
+        download_url = '{}?client_id={}'.format(
+            sc_track.download_url,
+            soundcloud_service.client_id)
         # Download track to config['save_directory']
         # using service.Service.download utility method
         filename = self.download(
