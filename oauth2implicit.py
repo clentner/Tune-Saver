@@ -120,7 +120,7 @@ class ClientRedirectHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 b"""<html><head><script>var loc=window.location.href.replace(/#/, '?');
                 window.location.href=loc.replace(/\?\?/, '?');</script></head><body>
                 <noscript>Please remove the # in the URL. If there is no question mark (?)
-                in the URL, put one where the # was. Then press enter to reload.</noscript></body
+                in the URL, put one where the # was. Then press enter to reload.</noscript></body>
                 </html>""")
     def log_message(self, format, *args):
         """Do not log messages to stdout while running as cmd. line program."""
