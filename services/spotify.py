@@ -17,8 +17,8 @@ class Spotify(Service):
     def __init__(self, config):
         self.config = config
         # Call this initially to get the user a chance to sign in on their
-        # first run of the program. It is also called on every save(), as
-        # a lazy method of refreshing. Subsequent calls do not require
+        # first run of the program. It is also called on every save(), in case
+        # the token has expired. Subsequent calls do not require
         # user interaction.
         if self._token_prompt():
             me = self.spotify.me()
