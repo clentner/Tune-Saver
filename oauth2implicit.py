@@ -157,7 +157,11 @@ def run_flow(authorize_url, port=8080):
     params = None
     if not noauth_local_webserver:
         httpd.handle_request()
-        httpd.handle_request()
+        if not hasattr(httpd, 'query_params'):
+            # The javascript was delivered to refresh the page with the
+            # query params moved out of the fragment. Handle this new
+            # request to actually get those params.
+            httpd.handle_request()
         params = httpd.query_params
         if 'error' in params:
             raise Exception('Authentication request was rejected.')
