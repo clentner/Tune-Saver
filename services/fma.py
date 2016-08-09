@@ -12,6 +12,11 @@ class FMA(Service):
     name = "Free Music Archive"
 
     def __init__(self, config):
+        '''
+        Instantiation. Currently, `config` is not used, but a 'save_directory'
+        key in config may be used in the future if the Free Music Archive
+        allows programmatic downloading (rather than via browser).
+        '''
         self.config = config
 
     def search(self, track):
