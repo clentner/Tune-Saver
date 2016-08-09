@@ -25,13 +25,17 @@ class Youtube(Service):
     name = "YouTube"
     
     def __init__(self, config):
+        # Authenticate to YouTube
         self.youtube = self.get_authenticated_service(client_secrets_file)
+        
+        # Get the playlist title and owner
         playlist_snippet = self.youtube.playlists().list(
             part="snippet",
             id=config['playlist_id']
             ).execute()['items'][0]['snippet']
-        self.playlist_title = playlist_snippet['title']
-        self.channel_title = playlist_snippet['channelTitle']
+        self.playlist_title = playlist_snippet.get('title', '')
+        self.channel_title = playlist_snippet.get('channelTitle', '')
+        
         print('Using YouTube playlist "{}" by {}'.format(
             self.playlist_title,
             self.channel_title))
