@@ -23,8 +23,10 @@ class Spotify(Service):
         if self._token_prompt():
             me = self.spotify.me()
             self.username = me['id']
+            # Not all users will have a display name.
             print('Authenticated to Spotify as ' +
                 str(me['display_name'] or me['id']))
+            # Extract the playlist title
             self.playlist_title = self.spotify.user_playlist(
                 self.username,
                 config['playlist_id']
@@ -57,6 +59,9 @@ class Spotify(Service):
             expires_in = query_dict['expires_in']
             self.token_expiry_time = datetime.now() + timedelta(0, int(expires_in))
         except (KeyError, TypeError):
+            # It's possible the flow had to be completed manually, via input().
+            # In this case, we will not have the expires_in value, but it's likely
+            # going to be one hour.
             self.token_expiry_time = datetime.now() + timedelta(0, 3600)
         # Step 4. Use the access token to access the Spotify Web API
         self.spotify = spotipy.Spotify(auth=token)
