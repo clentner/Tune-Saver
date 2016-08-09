@@ -19,6 +19,8 @@ For purchase websites, your web browser will be opened to the song.
 
 Usage
 -----
+Requires python 3.4 or later.
+
 * Install the dependencies below.
 * Clone the repository or download and unzip the [source](https://github.com/clentner/Tune-Saver/archive/master.zip).
 * Fill out the fields in `config.ini`, for any services you wish to use. Any service with empty fields will be disabled.
