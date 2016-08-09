@@ -62,6 +62,8 @@ class Service(metaclass=ABCMeta):
         Download the file at `url` to "{save_directory}\{artist} - {title}.{extension}".
         Raise HTTPError on non-200 status.
         
+        Assumes a 'save_directory' key in the config.
+        
         Convenience method. Services are not required to implement nor call this method.
         @param url The url from which to download the song
         @param artist The artist name
