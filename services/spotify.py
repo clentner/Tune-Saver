@@ -10,6 +10,9 @@ from servicetrack import ServiceTrack
 from oauth2implicit import run_flow
 
 client_id = 'e8df8c23cd3b48638da9a55041ee4641'
+# Tokens from the Implicit Grant flow currently expire in one hour.
+# If unable to get an expires_in value from the auth response, use this.
+DEFAULT_EXPIRY = 3600
 
 class Spotify(Service):
     name = "Spotify"
@@ -62,7 +65,7 @@ class Spotify(Service):
             # It's possible the flow had to be completed manually, via input().
             # In this case, we will not have the expires_in value, but it's likely
             # going to be one hour.
-            self.token_expiry_time = datetime.now() + timedelta(0, 3600)
+            self.token_expiry_time = datetime.now() + timedelta(0, DEFAULT_EXPIRY)
         # Step 4. Use the access token to access the Spotify Web API
         self.spotify = spotipy.Spotify(auth=token)
         self.spotify.trace = False
