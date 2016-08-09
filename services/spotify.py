@@ -24,7 +24,7 @@ class Spotify(Service):
             me = self.spotify.me()
             self.username = me['id']
             print('Authenticated to Spotify as ' +
-                me['display_name'])
+                str(me['display_name'] or me['id']))
             self.playlist_title = self.spotify.user_playlist(
                 self.username,
                 config['playlist_id']
@@ -42,7 +42,7 @@ class Spotify(Service):
         if hasattr(self, 'token_expiry_time') and datetime.now() < self.token_expiry_time:
             return True
         # Obtain a new access token.
-        scope = 'playlist-modify-public'
+        scope = 'playlist-modify-public playlist-modify-private'
         redirect_uri = "http://127.0.0.1:8080"
         # Step 1. Your application requests authorization
         endpoint = 'https://accounts.spotify.com/authorize?'
