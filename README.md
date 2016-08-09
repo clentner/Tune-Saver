@@ -4,14 +4,15 @@ Finds a way to save the currently playing song, by searching streaming services,
 
 Here's how it works:
 
-1. Play a song on any of the hundreds of sources supported by a Last.fm
+1. Configure [Last.fm](http://www.last.fm)
+2. Play a song on any of the hundreds of sources supported by a Last.fm
 scrobbler (Pandora, YouTube, Spotify, Windows Media Player, Vevo...)
-2. Hit enter in the Tune Saver interface
-3. Many music sources, streaming and download-based are
+3. Hit enter in the Tune Saver interface
+4. Many music sources, streaming and download-based are
 automatically searched for the song, including
 Jamendo, the Free Music Archive, SoundCloud, Spotify, and YouTube.
-4. Choose from the presented list of services.
-5. The song will be downloaded or added to a playlist automatically.
+5. Choose from the presented list of services.
+6. The song will be downloaded or added to a playlist automatically.
 For purchase websites, your web browser will be opened to the song.
 
 ![Saving a song to Spotify with Tune Saver](images/tunesaver.gif)
