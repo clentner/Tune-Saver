@@ -9,6 +9,10 @@ from servicetrack import ServiceTrack
 client_id = 'bf717ba60ed729e683d10bd636916b15'
 
 class Soundcloud(Service):
+    '''
+    Base class for SoundCloud based services. Implements searching for
+    one track. Cannot be instantiated.
+    '''
     name = "SoundCloud"
 
     def search_first(self, track):
