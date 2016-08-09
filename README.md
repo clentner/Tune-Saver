@@ -39,12 +39,8 @@ Requires `beautifulsoup4`, `requests`, `google-api-python-client`, `pylast`,
 
 Todo
 ----
-* Refactor shared code
 * Soundcloud purchase_url
 * Multiple tries with SoundCloud
 * Remove need for list_soundcloud_playlists tool
 * Multiple playlist targets
 * Hotkey?
-* Listen on localhost for OAuth
-    - Use the client used for YouTube?
-* Abstract out shared OAuth flows

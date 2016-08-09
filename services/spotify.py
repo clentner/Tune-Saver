@@ -7,6 +7,7 @@ import spotipy.util
 
 from services.service import Service
 from servicetrack import ServiceTrack
+from oauth2implicit import run_flow
 
 client_id = 'e8df8c23cd3b48638da9a55041ee4641'
 
@@ -42,7 +43,7 @@ class Spotify(Service):
             return True
         # Obtain a new access token.
         scope = 'playlist-modify-public'
-        redirect_uri = "http://127.0.0.1/spotify"
+        redirect_uri = "http://127.0.0.1:8080"
         # Step 1. Your application requests authorization
         endpoint = 'https://accounts.spotify.com/authorize?'
         params = dict(
@@ -51,21 +52,12 @@ class Spotify(Service):
             response_type='token',
             scope=scope)
         url = endpoint + urlencode(params)
-        webbrowser.open(url)
-        # Step 2. The user is asked to authorize access within the scopes
-        # Step 3. The user is redirected back to your specified URI
-        redirect_url = input('Enter the URL to which you were redirected: ')
+        token, query_dict = run_flow(url)
         try:
-            query_dict = parse_qs(urlparse(redirect_url).fragment)
-            expires_in = query_dict['expires_in'][0]
+            expires_in = query_dict['expires_in']
             self.token_expiry_time = datetime.now() + timedelta(0, int(expires_in))
-            token = query_dict['access_token'][0]
-        except KeyError:
-            print('Authentication to Spotify failed. No access token found in URL.')
-            return False
-        except ValueError:
-            print('Invalid expires_in value')
-            return False
+        except (KeyError, TypeError):
+            self.token_expiry_time = datetime.now() + timedelta(0, 3600)
         # Step 4. Use the access token to access the Spotify Web API
         self.spotify = spotipy.Spotify(auth=token)
         self.spotify.trace = False

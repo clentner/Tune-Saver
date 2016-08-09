@@ -6,6 +6,7 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlsplit, urlunsplit
 from services.service import Service
 from servicetrack import ServiceTrack
 from services import soundcloud_service
+from oauth2implicit import run_flow
 
 def set_query_parameter(url, param_name, param_value):
     """Given a URL, set or replace a query parameter and return the
@@ -47,7 +48,7 @@ class SoundcloudPlaylist(soundcloud_service.Soundcloud):
         '''
         client = soundcloud.Client(
             client_id=soundcloud_service.client_id,
-            redirect_uri='http://127.0.0.1/soundcloud'
+            redirect_uri='http://127.0.0.1:8080'
         )
         # check for cached access token
         if cache_path is not None:
@@ -71,14 +72,8 @@ class SoundcloudPlaylist(soundcloud_service.Soundcloud):
             #    has been obtained. This is normally done within a flow called
             #    internally by the client.
             auth_url = client.authorize_url()
-            auth_url = set_query_parameter(auth_url, 'response_type', 'code_and_token')
-            webbrowser.open(auth_url)
-            redirect_url = input('Enter the URL to which you were redirected: ')
-            # Extract the token from the URL
-            try:
-                token = parse_qs(urlparse(redirect_url).fragment)['access_token'][0]
-            except KeyError:
-                raise Exception('Authentication to SoundCloud failed. No access token found in URL.')
+            auth_url = set_query_parameter(auth_url, 'response_type', 'token')
+            token, _ = run_flow(auth_url, 8080)
             client.access_token = token
             self._save_cached_token(client.access_token)
         return client
