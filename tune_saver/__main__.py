@@ -44,6 +44,7 @@ def save_track(track, services):
             # This looks bad, but there's a real reason to just eat the exception.
             # For whatever reason, one service caused an error. This is not
             # cause for giving up on the other services.
+            # TODO: Logging could be added here in the future.
             print(str(e))
             print('Could not search ' + service.name)
     
