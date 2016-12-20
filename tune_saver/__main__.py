@@ -4,7 +4,8 @@ To avoid difficulty with Unicode song titles, set your IO encoding:
 '''
 
 import configparser
-from functools import partial
+import queue
+import threading
 import pylast
 
 from services import fma, soundcloud_playlist, spotify, jamendo, youtube
@@ -36,10 +37,14 @@ def save_track(track, services):
     to the user. Prompt the user for a selection. Save the selection.
     '''
     # Search every service for potential tracks to save
-    potential_tracks = []  # list of (service, servicetrack) tuples
+    # Services populate the queue
+    servicetrack_queue = queue.Queue()
+    threads = []
     for service in services:
         try:
-            potential_tracks.extend((service, st) for st in service.search(track))
+            service_thread = threading.Thread(target=service.search, args=(track, servicetrack_queue))
+            service_thread.start()
+            threads.append(service_thread)
         except Exception as e:
             # This looks bad, but there's a real reason to just eat the exception.
             # For whatever reason, one service caused an error. This is not
@@ -48,36 +53,43 @@ def save_track(track, services):
             print(str(e))
             print('Could not search ' + service.name)
     
-    # Print the list of track sources
+    for service_thread in threads:
+        service_thread.join()
+    
+    # Print the list of track sources.
+    # Consume all tracks from the queue.
     print('0. Cancel')
     i = 1
-    for service, servicetrack in potential_tracks:
+    track_prompts = {}
+    while not servicetrack_queue.empty():
+        servicetrack = servicetrack_queue.get()
         print('{}. {}: {}'.format(
             i,
-            service.name,
+            servicetrack.service.name,
             servicetrack.prompt))
+        track_prompts[i] = servicetrack
         i += 1
 
     # Prompt the user for a selection. Repeat until success or the user cancels.
     success = False
     while not success:
         try:
-            st_number = int(input('\nSelect an option number: ')) - 1
+            st_number = int(input('\nSelect an option number: '))
         except ValueError:
             print('Enter an integer')
             continue
-        if st_number >= len(potential_tracks):
-            print('Not a valid option')
-            continue
-        if st_number < 0:
+        if st_number == 0:
             # User selected the cancel option
             print('Canceled.')
             return
+        if st_number not in track_prompts:
+            print('Not a valid option')
+            continue
         
         # Save the track the user selected.
         try:
-            service, servicetrack = potential_tracks[st_number]
-            success, message = service.save(servicetrack)
+            servicetrack = track_prompts[st_number]
+            success, message = servicetrack.service.save(servicetrack)
             print(message)
         except Exception as e:
             print(str(e))

@@ -14,12 +14,12 @@ class LastFmPurchase(Service):
     def __init__(self, config):
         self.config = config
         
-    def search(self, track):
+    def search(self, track, queue):
         '''
         Checks the Last.fm track webpage for a purchase link.
         
         @param track A pylast track object
-        @return A list containing up to one ServiceTrack
+        @param queue Queue for results
         '''
         # Download the Last.fm webpage for this track.
         r = requests.get(track.get_url())
@@ -39,14 +39,14 @@ class LastFmPurchase(Service):
         except AttributeError:
             pass  # Better to have extra text than no price.
         # Prompt to be displayed to user
-        st = ServiceTrack('Buy "{} - {}" from {} for {}'.format(
+        st = ServiceTrack(self, 'Buy "{} - {}" from {} for {}'.format(
             track.artist.name,
             track.title,
             urlparse(buy_link).hostname,
             price))
         # Save the link to be opened if the user chooses this option.
         st.buy_link = buy_link
-        return [st]
+        queue.put(st)
     
     def save(self, servicetrack):
         '''

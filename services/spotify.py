@@ -71,10 +71,10 @@ class Spotify(Service):
         self.spotify.trace = False
         return True
 
-    def search(self, track):
+    def search(self, track, queue):
         '''
         @param track A pylast track object
-        @return A list containing up to one ServiceTrack
+        @param queue Queue for results
         '''
         q = 'artist:"{}" track:"{}"'.format(
             track.artist.name,
@@ -84,9 +84,9 @@ class Spotify(Service):
         except IndexError:
             return []
         
-        st = ServiceTrack('Save "{}" to playlist'.format(spotify_track['name']))
+        st = ServiceTrack(self, 'Save "{}" to playlist'.format(spotify_track['name']))
         st.track = spotify_track
-        return [st]
+        queue.put(st)
         
     def save(self, servicetrack):
         '''

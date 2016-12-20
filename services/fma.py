@@ -19,11 +19,11 @@ class FMA(Service):
         '''
         self.config = config
 
-    def search(self, track):
+    def search(self, track, queue):
         '''
         Search the Free Music Archive for the track.
         @param track A pylast track object
-        @return A list containing up to one ServiceTrack
+        @param queue Queue for results
         '''
         searchURL = 'https://freemusicarchive.org/api/trackSearch'
         q = track.artist.name + ' - ' + track.title
@@ -39,9 +39,9 @@ class FMA(Service):
         if id == '10' and (track.artist.name != "Kurt Vile" or track.title != "Freeway"):
             return []
         
-        st = ServiceTrack('Download "{}" with your browser'.format(q))
+        st = ServiceTrack(self, 'Download "{}" with your browser'.format(q))
         st.id = id
-        return [st]
+        queue.put(st)
         
     def save(self, servicetrack):
         '''

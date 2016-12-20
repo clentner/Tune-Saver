@@ -14,12 +14,14 @@ class ServiceTrack():
     - Any private implementation data, e.g. URL or UID
     '''
     
-    def __init__(self, prompt):
+    def __init__(self, service, prompt):
         '''
+        @param service the Service which accepts this track for save()ing
         @param prompt The text displayed to the user. Should take the form of an action sentence,
         e.g. 'Buy "Freebird" for $1.29' or 'Save "Too Close" to playlist'.
         Do include the title and/or artist of the track, if available.
         Do not use a question, e.g. "Do you want to favorite this track?"
         Do not include the name of the service.
         '''
+        self.service = service
         self.prompt = prompt

@@ -16,10 +16,10 @@ class Jamendo(Service):
         '''
         self.config = config
 
-    def search(self, track):
+    def search(self, track, queue):
         '''
         @param track A pylast track object
-        @return A list containing up to one ServiceTrack
+        @param queue Queue for results
         '''
         # Use the Jamendo API to search for up to one track
         endpoint = 'https://api.jamendo.com/v3.0/tracks/'
@@ -39,13 +39,13 @@ class Jamendo(Service):
             return []
 
         # The prompt will be passed to the UI.
-        st = ServiceTrack('Download "{} - {}" as mp3 directly to {}'.format(
+        st = ServiceTrack(self, 'Download "{} - {}" as mp3 directly to {}'.format(
             response['results'][0]['artist_name'],
             response['results'][0]['name'],
             self.config['save_directory']))
         # Save the URL, artist name, and song name, for saving to a file.
         st.info = response['results'][0]  # Dictionary containing song information
-        return [st]
+        queue.put(st)
         
     def save(self, servicetrack):
         '''

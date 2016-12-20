@@ -95,18 +95,18 @@ class SoundcloudPlaylist(soundcloud_service.Soundcloud):
             # Being unable to cache the token isn't fatal.
             print(str(e))
             
-    def search(self, track):
+    def search(self, track, queue):
         '''
         @param track A pylast track object
-        @return A list containing ServiceTrack objects
+        @param queue Queue for results
         '''
         sc_track = self.search_first(track)
         if not sc_track:
             return []
 
-        st = ServiceTrack('Save "{}" to playlist'.format(sc_track.title))
+        st = ServiceTrack(self, 'Save "{}" to playlist'.format(sc_track.title))
         st.track = sc_track
-        return [st]
+        queue.put(st)
 
     def save(self, servicetrack):
         '''

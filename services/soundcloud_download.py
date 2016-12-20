@@ -17,10 +17,10 @@ class SoundcloudDownload(soundcloud_service.Soundcloud):
         self.client = soundcloud.Client(client_id = soundcloud_service.client_id)
         self.config = config
         
-    def search(self, track):
+    def search(self, track, queue):
         '''
         @param track A pylast track object
-        @return A list containing ServiceTrack objects
+        @param queue Queue for results
         '''
         # search_first is inherited from soundcloud_service.Soundcloud
         sc_track = self.search_first(track)
@@ -28,7 +28,7 @@ class SoundcloudDownload(soundcloud_service.Soundcloud):
             return []
 
         # Pass prompt string back to UI
-        st = ServiceTrack('Download "{}" to {}'.format(
+        st = ServiceTrack(self, 'Download "{}" to {}'.format(
             sc_track.title,
             self.config['save_directory']))
         # Save the track for downloading,
@@ -37,7 +37,7 @@ class SoundcloudDownload(soundcloud_service.Soundcloud):
         # the SoundCloud title is often unreliable.
         st.artist = track.artist.name
         st.title = track.title
-        return [st]
+        queue.put(st)
         
     def save(self, servicetrack):
         '''

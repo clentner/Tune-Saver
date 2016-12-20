@@ -32,13 +32,12 @@ class Service(metaclass=ABCMeta):
         pass
         
     @abstractmethod
-    def search(self, track):
+    def search(self, track, queue):
         '''
-        Search the service for a track, returning a list of candidates.
-        Return an empty list if none were found.
+        Search the service for a track, enqueuing a list of ServiceTrack candidates.
         
         @param track A pylast track object
-        @return A list of ServiceTrack objects available from this service
+        @param queue Queue for results
         '''
     
     @abstractmethod

@@ -80,10 +80,10 @@ class Youtube(Service):
         
         return search_response['items'][0]
         
-    def search(self, track):
+    def search(self, track, queue):
         '''
         @param track A pylast track object
-        @return A list containing up to one ServiceTrack
+        @param queue Queue for results
         '''
         q = track.artist.name + ' ' + track.title
         result = self.search_first(q)
@@ -91,9 +91,9 @@ class Youtube(Service):
             return []
         video_id = result['id']['videoId']
         video_title = result['snippet']['title']
-        st = ServiceTrack('Save "{}" to playlist'.format(video_title))
+        st = ServiceTrack(self, 'Save "{}" to playlist'.format(video_title))
         st.id = video_id
-        return [st]
+        queue.put(st)
         
     def save(self, servicetrack):
         '''
