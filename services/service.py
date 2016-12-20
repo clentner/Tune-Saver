@@ -73,6 +73,7 @@ class Service(metaclass=ABCMeta):
         '''
         filename = '{} - {}.{}'.format(artist, title, extension)
         # Quick pass at making the filename legal
+        # TODO: Really this is filesystem dependent and should be improved
         filename = re.sub(r'[/\\:*?"<>|]', '_', filename)
         filepath = os.path.join(self.config['save_directory'], filename)
         r = requests.get(url, stream=True)
