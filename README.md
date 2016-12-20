@@ -4,7 +4,7 @@ Finds a way to save the currently playing song, by searching streaming services,
 
 Here's how it works:
 
-1. Configure [Last.fm](http://www.last.fm)
+1. Configure [Last.fm](http://www.last.fm). Last.fm is a service which keeps a record of the songs you have listened to. 
 2. Play a song on any of the hundreds of sources supported by a Last.fm
 scrobbler (Pandora, YouTube, Spotify, Windows Media Player, Vevo...)
 3. Hit enter in the Tune Saver interface
