@@ -42,6 +42,7 @@ Requires `beautifulsoup4`, `requests`, `google-api-python-client`, `pylast`,
 
 Todo
 ----
+* Remove tuple from save() return: use exceptions.
 * Soundcloud purchase_url
 * Multiple tries with SoundCloud
 * Remove need for list_soundcloud_playlists tool
