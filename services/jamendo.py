@@ -57,4 +57,5 @@ class Jamendo(Service):
             servicetrack.info['artist_name'],
             servicetrack.info['name'],
             'mp3')
+        # Would have raised exception on failure. Report success.
         return (True, "Saved from Jamendo to {}".format(filepath))
